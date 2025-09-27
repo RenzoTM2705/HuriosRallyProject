@@ -24,8 +24,12 @@ export function Login() {
       saveToken(res.token);
       // redirigir a home
       navigate("/");
-    } catch (err: any) {
-      setError(err.message || "Error al iniciar sesión");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Error al iniciar sesión");
+      }
     } finally {
       setClicked(false);
     }
@@ -44,7 +48,7 @@ export function Login() {
           <Input label="Clave" type="password" placeholder="********" onChange={(e)=>setClave(e.target.value)} />
           {error && <div className="text-sm text-red-600">{error}</div>}
           <ButtonState initialText="Ingresar" successText="Ingreso exitoso" disabled={!isFormValid} clicked={clicked} />
-          <a href="/register" className="mt-2 w-full text-center bg-[var(--Primary_4)] text-white py-2 rounded hover:bg-[var(--Primary_5)] transition">Registrarse</a>
+          <a href="/register" className="mt-2 w-full text-center bg-[var(--Primary_4)] text-white py-2 rounded-lg hover:bg-[var(--Primary_5)] transition">Registrarse</a>
           <a href="/reset-password" className="underline w-fit mt-2 hover:text-[var(--Primary_4)]">¿Olvidó su contraseña?</a>
         </form>
       </div>

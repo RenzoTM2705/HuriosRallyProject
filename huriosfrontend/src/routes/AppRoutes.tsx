@@ -6,7 +6,7 @@ import { Login } from "../pages/Login";
 import { Register } from "../pages/Register";
 import { VerifyEmail } from "../pages/VerifyEmail";
 import { ResetPassword } from "../pages/ResetPassword";
-
+import { Products } from "../pages/Products";
 /*
   AppRoutes instrumentado:
    - muestra en pantalla (y en consola) la location actual
@@ -38,6 +38,7 @@ const AppRoutes: React.FC = () => (
       <Route path="/register" element={<Register />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/products" element={<Products />} />
 
       {/* catch-all: muestra la location en la UI si no hubo match */}
       <Route

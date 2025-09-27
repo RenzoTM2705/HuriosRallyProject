@@ -84,9 +84,13 @@ export function Register() {
       // pasamos el email por query para autocompletar el campo en VerifyEmail
       navigate(`/verify-email?email=${encodeURIComponent(correo)}`);
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       // error de red u otro
-      setError(err.message || "Error de conexión al registrar");
+      if (err instanceof Error) {
+        setError(err.message || "Error de conexión al registrar");
+      } else {
+        setError("Error de conexión al registrar");
+      }
       setClicked(false);
     } finally {
       setLoading(false);
@@ -120,7 +124,7 @@ export function Register() {
           {/* Botón de envío: ButtonState maneja estados visuales */}
           <ButtonState
             initialText="Registrar"
-            successText="Registro exitoso"
+            successText="Registrando..."
             disabled={!isFormValid || loading}
             clicked={clicked}
           />

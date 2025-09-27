@@ -8,7 +8,7 @@ import React from "react";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-[#1f2d3a] text-white mt-12">
+    <footer className="bg-[var(--Primary_5)] text-white mt-12">
       <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
           <img src="/assets/imgs/logo.webp" alt="Logo" className="h-10 mb-3" />
