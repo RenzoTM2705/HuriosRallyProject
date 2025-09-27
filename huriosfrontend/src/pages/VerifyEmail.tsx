@@ -1,5 +1,5 @@
 // src/pages/VerifyEmail.tsx
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 /*
@@ -67,16 +67,16 @@ export function VerifyEmail() {
         <h2 className="text-xl font-bold mb-4">Verificar correo</h2>
 
         <label className="block text-sm mb-1">Correo</label>
-        <input value={email} onChange={(e)=>setEmail(e.target.value)}
-               className="w-full border p-2 rounded mb-3" placeholder="tu@mail.com" />
+        <input value={email} onChange={(e) => setEmail(e.target.value)}
+          className="w-full border p-2 rounded mb-3" placeholder="tu@mail.com" />
 
         <button onClick={resend} className="w-full bg-blue-600 text-white py-2 rounded mb-4" disabled={loading}>
           Reenviar código
         </button>
 
         <label className="block text-sm mb-1">Código (6 dígitos)</label>
-        <input value={code} onChange={(e)=>setCode(e.target.value)}
-               className="w-full border p-2 rounded mb-3" placeholder="123456" />
+        <input value={code} onChange={(e) => setCode(e.target.value)}
+          className="w-full border p-2 rounded mb-3" placeholder="123456" />
 
         <button onClick={verify} className="w-full bg-green-600 text-white py-2 rounded" disabled={loading}>
           Verificar código

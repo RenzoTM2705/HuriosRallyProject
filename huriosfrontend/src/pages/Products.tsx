@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ButtonNormal } from "../components/ButtonNormal";
 import Navbar from "../components/Navbar";
 import ProductCard from "../components/ProductCard";
+import Footer from "../components/Footer";
 
 
 export function Products() {
@@ -11,7 +12,7 @@ export function Products() {
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
-    
+
     const toggleSearch = () => setIsSearchOpen(prev => !prev);
     const closeSearch = () => setIsSearchOpen(false);
 
@@ -31,9 +32,12 @@ export function Products() {
             document.removeEventListener('keydown', handleKeyDown);
         };
     }, [isSearchOpen]);
-
+    
     return (
-        <main className="relative">
+        <>
+        <Navbar />
+        <main className="relative ">
+            
             {/* Modal del filtro de productos */}
             {isModalOpen && (
                 <div 
@@ -71,11 +75,10 @@ export function Products() {
                     </div>
                 </div>
             )}
-            <Navbar />
-            
-            <div className="flex items-center justify-between gap-2 p-4">
-                <h1 className="text-[20px] font-bold">Productos</h1>
-                <div className="flex items-center gap-2">
+            <div className="max-w-7xl mx-auto">
+                <div className="flex items-center justify-between gap-2 p-4">
+                    <h1 className="text-[20px] font-bold">Productos</h1>
+                    <div className="flex items-center gap-2">
                     {/* Barra de búsqueda expandible*/}
                     {isSearchOpen && (
                         <div className="flex items-center">
@@ -96,28 +99,36 @@ export function Products() {
                         </div>
                     )}
                     
-                    <button onClick={toggleSearch} aria-label="Buscar">
+                    <button className="hover:cursor-pointer" onClick={toggleSearch} aria-label="Buscar">
                         <svg width={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M16.6725 16.6412L21 21M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="#0C1424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
                     </button>
-                    <button onClick={openModal} aria-label="Filtrar productos">
+                    <button className="hover:cursor-pointer"  onClick={openModal} aria-label="Filtrar productos">
                         <svg width={24} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M0 3H16V1H0V3Z" fill="#0C1424"></path> <path d="M2 7H14V5H2V7Z" fill="#0C1424"></path> <path d="M4 11H12V9H4V11Z" fill="#0C1424"></path> <path d="M10 15H6V13H10V15Z" fill="#0C1424"></path> </g></svg>
                     </button>
                 </div>
             </div>
             <div className="flex gap-7 px-4 pb-4 overflow-x-auto">
-                <a href="#" className="text-xs font-bold border-2 p-1 rounded-lg">Categoria</a>
-                <a href="#" className="text-xs font-bold border-2 p-1 rounded-lg">Categoria</a>
-                <a href="#" className="text-xs font-bold border-2 p-1 rounded-lg">Categoria</a>
-                <a href="#" className="text-xs font-bold border-2 p-1 rounded-lg">Categoria</a>
-                <a href="#" className="text-xs font-bold border-2 p-1 rounded-lg">Categoria</a>
-                <a href="#" className="text-xs font-bold border-2 p-1 rounded-lg">Categoria</a>
+                <a href="#" className="text-xs font-bold border-2 p-1 rounded-lg">Categoría</a>
+                <a href="#" className="text-xs font-bold border-2 p-1 rounded-lg">Categoría</a>
+                <a href="#" className="text-xs font-bold border-2 p-1 rounded-lg">Categoría</a>
+                <a href="#" className="text-xs font-bold border-2 p-1 rounded-lg">Categoría</a>
+                <a href="#" className="text-xs font-bold border-2 p-1 rounded-lg">Categoría</a>
+                <a href="#" className="text-xs font-bold border-2 p-1 rounded-lg">Categoría</a>
             </div>
-            <section className="mx-20 flex flex-wrap gap-4 justify-center">
+            <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center px-4 pb-20">
+                <ProductCard />
+                <ProductCard />
+                <ProductCard />
+                <ProductCard />
+                <ProductCard />
                 <ProductCard />
                 <ProductCard />
                 <ProductCard />
                 <ProductCard />
             </section>
+            </div>
         </main>
+        <Footer/>
+        </>
     );
 }

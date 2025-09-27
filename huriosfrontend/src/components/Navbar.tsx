@@ -2,13 +2,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-/*
- Navbar.tsx
- - Responsive header with hamburger menu for mobile.
- - Search is highlighted (white background + shadow) so it doesn't blend with navbar.
- - Categories are clickable (dropdown on desktop, <details> on mobile).
- - Comments inline explain behavior.
-*/
 
 const categories = [
   { id: 1, name: "Motor" },
@@ -27,11 +20,10 @@ const Navbar: React.FC = () => {
   return (
     <header className="w-full bg-[var(--Primary_5)] text-white sticky top-0 z-50">
       {/* contenedor principal */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 flex items-center justify-between">
-        {/* logo + título */}
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* logo */}
         <Link to="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-          {/* logo: colocarlo en public/assets/imgs/logo.webp */}
-          <img src="/assets/imgs/logo.webp" alt="Hurios Rally" className="h-8 sm:h-10 w-auto" />
+          <img src="/assets/imgs/logo.webp" alt="Hurios Rally" className="h-15 w-auto" />
         </Link>
 
         {/* nav desktop: oculto en lg- (visible en lg+) */}
@@ -87,18 +79,14 @@ const Navbar: React.FC = () => {
             />
           </div>
 
-          {/* carrito - siempre visible */}
+          {/* carrito */}
           <Link to="/cart" className="inline-flex items-center p-1.5 sm:p-2 rounded hover:bg-white/10 flex-shrink-0">
-            <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M3 3h2l.4 2M7 13h10l3-8H6.4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <circle cx="10" cy="20" r="1" />
-              <circle cx="18" cy="20" r="1" />
-            </svg>
+            <svg width={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M6.29977 5H21L19 12H7.37671M20 16H8L6 3H3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z" stroke="#FFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
           </Link>
 
           {/* botón login circular */}
-          <Link to="/login" aria-label="Iniciar sesión" className="inline-flex items-center justify-center h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white text-[#27557a] hover:scale-105 transition flex-shrink-0">
-            <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+          <Link to="/login" aria-label="Iniciar sesión" className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-white text-[#27557a] hover:scale-105 transition flex-shrink-0">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
               <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z" />
             </svg>
           </Link>
@@ -109,7 +97,7 @@ const Navbar: React.FC = () => {
             onClick={() => setMenuOpen(v => !v)}
             aria-label="Abrir menu"
           >
-            <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path d="M4 6h16M4 12h16M4 18h16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
@@ -117,8 +105,9 @@ const Navbar: React.FC = () => {
       </div>
 
       {/* Mobile menu (visible cuando menuOpen=true) */}
-      <div className={`lg:hidden bg-[var(--Primary_5)] text-white ${menuOpen ? "block" : "hidden"} px-3 sm:px-4 pb-4`}>
-        <nav className="flex flex-col gap-2">
+      <div className={`lg:hidden bg-[var(--Primary_5)] text-white ${menuOpen ? "block" : "hidden"}`}>
+        <div className="max-w-7xl mx-auto px-4 pb-4">
+          <nav className="flex flex-col gap-2">
           <Link to="/" className="py-2 border-b border-white/10">Inicio</Link>
           <Link to="/products" className="py-2 border-b border-white/10">Productos</Link>
 
@@ -146,6 +135,7 @@ const Navbar: React.FC = () => {
             />
           </div>
         </nav>
+        </div>
       </div>
     </header>
   );
