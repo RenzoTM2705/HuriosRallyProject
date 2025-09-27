@@ -38,7 +38,7 @@ const Hero: React.FC = () => {
       {/* Overlay fijo encima de las imágenes */}
       <div className="relative z-10 flex flex-col items-center justify-center text-center h-full px-4">
         <h1 className="text-4xl md:text-6xl lg:text-8xl xl:text-9xl font-extrabold text-white drop-shadow-lg leading-tight">HURIOS RALLY</h1>
-        <p className="mt-4 text-white/90 max-w-2xl md:text-2xl lg:text-3xl xl:text-5xl">Bienvenido a nuestra tienda online — repuestos y accesorios con garantía.</p>
+        <p className="mt-4 text-white/90 max-w-2xl md:text-xl lg:text-2xl xl:text-3xl">Bienvenido a nuestra tienda online — repuestos y accesorios con garantía.</p>
 
       </div>
     </section>
