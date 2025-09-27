@@ -31,18 +31,15 @@ const Hero: React.FC = () => {
           />
         ))}
       </div>
-
+      <div>
+        {/* Capa oscura encima de las imágenes para mejorar contraste */}
+        <div className="absolute inset-0 bg-black/40 z-5" aria-hidden></div>
+      </div>
       {/* Overlay fijo encima de las imágenes */}
       <div className="relative z-10 flex flex-col items-center justify-center text-center h-full px-4">
-        <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg leading-tight">RALLY DE HURIOS</h1>
-        <p className="mt-4 text-white/90 max-w-2xl">Bienvenido a la tienda online — repuestos y accesorios con garantía.</p>
+        <h1 className="text-4xl md:text-6xl lg:text-8xl xl:text-9xl font-extrabold text-white drop-shadow-lg leading-tight">HURIOS RALLY</h1>
+        <p className="mt-4 text-white/90 max-w-2xl md:text-2xl lg:text-3xl xl:text-5xl">Bienvenido a nuestra tienda online — repuestos y accesorios con garantía.</p>
 
-        {/* indicadores visuales decorativos */}
-        <div className="mt-8 flex gap-2">
-          <span className="w-10 h-1 bg-white/80 rounded"></span>
-          <span className="w-6 h-1 bg-white/50 rounded"></span>
-          <span className="w-6 h-1 bg-white/50 rounded"></span>
-        </div>
       </div>
     </section>
   );
