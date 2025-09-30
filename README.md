@@ -88,7 +88,7 @@ Modelo estratégico: propuesta de valor, clientes y ventajas competitivas.
 
 ## 🏗️ Estructura técnica  
 - **Diagrama de capas**: organización de backend, frontend y servicios. [🔗 Ver diagrama de capas](https://utpedupe-my.sharepoint.com/:i:/r/personal/u23200248_utp_edu_pe/Documents/Proyecto%20para%20la%20Empresa%20Hurios/Diagramas/Diagrama%20de%20capas.png?csf=1&web=1&e=JcQOFK)  
-- **Diagrama ER y clases**: modelado físico de la base de datos. [🔗  Ver ER](https://utpedupe-my.sharepoint.com/:i:/r/personal/u23200248_utp_edu_pe/Documents/Proyecto%20para%20la%20Empresa%20Hurios/Diagramas/ModeloConceptualBD.png?csf=1&web=1&e=LUOHGt) | [Diagrama De Clases](https://utpedupe-my.sharepoint.com/:i:/r/personal/u23200248_utp_edu_pe/Documents/Proyecto%20para%20la%20Empresa%20Hurios/Diagramas/Diagrama%20De%20Clases.jpg?csf=1&web=1&e=LHTXze)
+- **Diagrama ER y clases**: modelado físico de la base de datos. [🔗  Ver ER](https://utpedupe-my.sharepoint.com/:i:/r/personal/u23200248_utp_edu_pe/Documents/Proyecto%20para%20la%20Empresa%20Hurios/Diagramas/ModeloConceptualBD.png?csf=1&web=1&e=LUOHGt) | [🔗 Diagrama De Clases](https://utpedupe-my.sharepoint.com/:i:/r/personal/u23200248_utp_edu_pe/Documents/Proyecto%20para%20la%20Empresa%20Hurios/Diagramas/Diagrama%20De%20Clases.jpg?csf=1&web=1&e=LHTXze)
 - **📅 WBS y Gantt**: planificación del proyecto. [🔗 Ver WBS](https://utpedupe-my.sharepoint.com/:i:/r/personal/u23200248_utp_edu_pe/Documents/Proyecto%20para%20la%20Empresa%20Hurios/EDT%20-%20LEANCANVAS/wbs.jpeg?csf=1&web=1&e=Jexeag)  
 - **Diagramas de proceso**: flujo antes y después de la implementación. [🔗 Ver digrama de procesos](...)
 
