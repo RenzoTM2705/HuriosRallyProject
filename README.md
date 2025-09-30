@@ -92,7 +92,7 @@ Modelo estratégico: propuesta de valor, clientes y ventajas competitivas.
 ---
 
 ## 🎨 Maquetas  
-Diseños en Balsamiq:  
+Diseños en Figma:  
 🖥️ [Opción 1](https://www.figma.com/design/gc8CHi6vDQF9jiQ3KA9XOb/Vista_Usuario_1?fuid=1541204056578805248#)  
 🖥️ [Opción 2](https://www.figma.com/design/HLAsnYu1cTmO4OYunQD27S/Vista_Usuario_2?node-id=0-1&t=LRGjgNH0x6vQM66F-1)  
 🖥️ [Opción 3](https://www.figma.com/design/HLAsnYu1cTmO4OYunQD27S/Vista_Usuario_2?node-id=0-1&t=LRGjgNH0x6vQM66F-1)
