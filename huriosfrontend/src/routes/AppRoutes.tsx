@@ -6,9 +6,9 @@ import { Login } from "../pages/Login";
 import { Register } from "../pages/Register";
 import { VerifyEmail } from "../pages/VerifyEmail";
 import { ResetPassword } from "../pages/ResetPassword";
-import { Products } from "../pages/Products";
+import  Products  from "../pages/Products";
 import { About } from "../pages/About";
-import { ProductsDetails } from "../pages/ProductsDetails";
+import  ProductsDetails  from "../pages/ProductsDetails";
 import { Cart } from "../pages/Cart";
 /*
   AppRoutes instrumentado:

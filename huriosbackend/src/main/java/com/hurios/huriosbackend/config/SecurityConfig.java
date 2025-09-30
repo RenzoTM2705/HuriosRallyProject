@@ -40,6 +40,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // rutas públicas (auth)
                 .requestMatchers("/auth/**").permitAll()
+                // rutas públicas (products - para que usuarios puedan ver productos sin login)
+                .requestMatchers("/products/**").permitAll()
                 // cualquier otra ruta requiere autenticación
                 .anyRequest().authenticated()
             )
