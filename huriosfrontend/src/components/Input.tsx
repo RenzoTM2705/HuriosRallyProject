@@ -6,10 +6,11 @@ type InputProps = {
     type: string;
     placeholder?: string;
     minLength?: number;
+    value?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 //Función input/componente
-export function Input({ label, type, placeholder, minLength, onChange }: InputProps) {
+export function Input({ label, type, placeholder, minLength, value, onChange }: InputProps) {
     //Asignar el id del label al input
     const id = label.toLowerCase().replace(/\s+/g, '-');
     return (
@@ -20,7 +21,8 @@ export function Input({ label, type, placeholder, minLength, onChange }: InputPr
             id={id} 
             type={type} 
             placeholder={placeholder} 
-            minLength={minLength} 
+            minLength={minLength}
+            value={value}
             onChange={onChange}
             required 
             className="border-black border-2 rounded-lg outline-none px-2.5 py-[3px]" ></input>

@@ -28,12 +28,44 @@ export function Register() {
   const [error, setError] = useState<string | null>(null); // mostrar errores al usuario
 
   // validaciones locales
-  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+  const isEmailValid = (() => {
+    // Lista de dominios válidos conocidos
+    const validDomains = [
+      'gmail', 'yahoo', 'hotmail', 'outlook', 'live', 'msn', 'icloud', 'me',
+      'aol', 'protonmail', 'tutanota', 'zoho', 'yandex', 'mail', 'gmx',
+      // Dominios educativos
+      'upc', 'unmsm', 'pucp', 'ulima', 'usil', 'utp', 'tecsup', 'senati',
+      // Dominios gubernamentales y empresariales peruanos
+      'gob', 'minsa', 'sunat', 'reniec', 'essalud', 'produce', 'minedu',
+      // Dominios corporativos conocidos
+      'empresa', 'company', 'corp', 'business', 'work', 'office'
+    ];
+    
+    // Expresión regular para extraer el dominio
+    const emailPattern = /^[^\s@]+@([^\s@]+)\.([a-z]{2,})$/i;
+    const match = correo.match(emailPattern);
+    
+    if (!match) return false;
+    
+    const domain = match[1].toLowerCase();
+    const extension = match[2].toLowerCase();
+    
+    // Verificar extensión válida
+    const validExtensions = ['com', 'org', 'net', 'edu', 'gov', 'mil', 'co', 'es', 'pe', 'cl', 'ar', 'mx'];
+    const isValidExtension = validExtensions.includes(extension);
+    
+    // Verificar dominio válido
+    const isValidDomain = validDomains.includes(domain);
+    
+    return isValidExtension && isValidDomain;
+  })();
+  
   const isPasswordMatch = clave.length >= 8 && clave === repetirClave;
+  const isCelularValid = celular.replace(/\s/g, '').length === 9; // Exactamente 9 dígitos
   const isFormValid =
     nombre.trim() !== "" &&
     isEmailValid &&
-    celular.trim() !== "" &&
+    isCelularValid &&
     isPasswordMatch;
 
   // URL base del backend (usa variable de entorno si la defines)
@@ -142,19 +174,50 @@ export function Register() {
                 <Input 
                   label="Correo electrónico" 
                   type="email" 
+                  value={correo}
                   onChange={(e) => setCorreo(e.target.value)} 
                   placeholder="ejemplo@gmail.com" 
                 />
+                {/* Validación visual del correo */}
+                {correo.length > 0 && (
+                  <div className="mt-1 text-xs">
+                    <p className={`${isEmailValid ? 'text-green-600' : 'text-red-500'}`}>
+                      Válido (gmail, yahoo, hotmail, outlook, etc.) {isEmailValid ? '✓' : '✗'}
+                    </p>
+                    {!isEmailValid && correo.includes('@') && correo.includes('.') && (
+                      <p className="text-amber-600 text-xs mt-1">
+                        Usa proveedores conocidos: gmail.com, yahoo.com, hotmail.com, outlook.com
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Input para celular */}
               <div className="sm:col-span-2">
                 <Input 
                   label="Número de celular" 
-                  type="tel" 
-                  onChange={(e) => setCelular(e.target.value)} 
+                  type="tel"
+                  value={celular}
+                  onChange={(e) => {
+                    // Solo permitir números y espacios, máximo 9 dígitos
+                    const value = e.target.value.replace(/[^0-9\s]/g, '');
+                    // Contar solo los números (sin espacios) y limitar a 9
+                    const numbersOnly = value.replace(/\s/g, '');
+                    if (numbersOnly.length <= 9) {
+                      setCelular(value);
+                    }
+                  }} 
                   placeholder="987 654 321" 
                 />
+                {/* Validación visual del celular */}
+                {celular.length > 0 && (
+                  <div className="mt-1 text-xs">
+                    <p className={`${isCelularValid ? 'text-green-600' : 'text-red-500'}`}>
+                      Exactamente 9 dígitos ({celular.replace(/\s/g, '').length}/9) {isCelularValid ? '✓' : '✗'}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Input para clave */}
