@@ -98,37 +98,140 @@ export function Register() {
   };
 
   return (
-    <main className="flex flex-col justify-center items-center h-screen mx-3.5">
-      <div className="flex flex-col items-center border-[var(--Primary_5)] border-2 rounded-lg p-13 w-full md:w-auto">
-        <img src="/assets/imgs/logo.webp" className="h-44 w-[182px]" alt="Logo Hurios Rally" title="Logo Hurios Rally" />
+    <main className="min-h-screen bg-gradient-to-br from-[var(--Primary_0)] via-[var(--Primary_1)] to-[var(--Primary_2)] flex flex-col justify-center items-center relative overflow-hidden py-8">
+      {/* Elementos decorativos de fondo */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[var(--Primary_3)] rounded-full opacity-20 blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[var(--Primary_4)] rounded-full opacity-15 blur-3xl"></div>
+        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-[var(--Primary_2)] rounded-full opacity-10 blur-2xl"></div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-full md:w-xl mt-6">
-          {/* Input para nombre */}
-          <Input label="Nombre" type="text" onChange={(e) => setNombre(e.target.value)} />
+      {/* Contenedor principal del formulario */}
+      <div className="relative z-10 w-full max-w-lg mx-8 sm:mx-6 md:mx-4">
+        <div className="bg-white/90 backdrop-blur-sm shadow-2xl border border-white/20 rounded-2xl p-6 sm:p-8 md:p-10">
+          {/* Header con logo */}
+          <div className="text-center mb-6">
+            <div className="mb-4">
+              <img 
+                src="/assets/imgs/logo.webp" 
+                className="h-16 w-auto mx-auto drop-shadow-lg" 
+                alt="Hurios Rally Logo" 
+                title="Logo Hurios Rally"
+              />
+            </div>
+            <h1 className="text-2xl font-bold text-[var(--Primary_7)] mb-2">
+              Crear cuenta nueva
+            </h1>
+          </div>
 
-          {/* Input para correo */}
-          <Input label="Correo" type="email" onChange={(e) => setCorreo(e.target.value)} placeholder="ejemplo@gmail.com" />
+          {/* Formulario */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Input para nombre */}
+              <div className="sm:col-span-2">
+                <Input 
+                  label="Nombre completo" 
+                  type="text" 
+                  onChange={(e) => setNombre(e.target.value)} 
+                  placeholder="Tu nombre completo"
+                />
+              </div>
 
-          {/* Input para celular */}
-          <Input label="Celular" type="tel" onChange={(e) => setCelular(e.target.value)} placeholder="987 654 321" />
+              {/* Input para correo */}
+              <div className="sm:col-span-2">
+                <Input 
+                  label="Correo electrónico" 
+                  type="email" 
+                  onChange={(e) => setCorreo(e.target.value)} 
+                  placeholder="ejemplo@gmail.com" 
+                />
+              </div>
 
-          {/* Input para clave */}
-          <Input label="Clave" type="password" onChange={(e) => setClave(e.target.value)} placeholder="********" minLength={8} />
+              {/* Input para celular */}
+              <div className="sm:col-span-2">
+                <Input 
+                  label="Número de celular" 
+                  type="tel" 
+                  onChange={(e) => setCelular(e.target.value)} 
+                  placeholder="987 654 321" 
+                />
+              </div>
 
-          {/* Input para repetir clave */}
-          <Input label="Repetir clave" type="password" onChange={(e) => setRepetirClave(e.target.value)} placeholder="********" minLength={8} />
+              {/* Input para clave */}
+              <div className="sm:col-span-1">
+                <Input 
+                  label="Contraseña" 
+                  type="password" 
+                  onChange={(e) => setClave(e.target.value)} 
+                  placeholder="********" 
+                  minLength={8} 
+                />
+              </div>
 
-          {/* Mostrar error si existe */}
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+              {/* Input para repetir clave */}
+              <div className="sm:col-span-1">
+                <Input 
+                  label="Confirmar contraseña" 
+                  type="password" 
+                  onChange={(e) => setRepetirClave(e.target.value)} 
+                  placeholder="********" 
+                  minLength={8} 
+                />
+              </div>
+            </div>
 
-          {/* Botón de envío: ButtonState maneja estados visuales */}
-          <ButtonState
-            initialText="Registrar"
-            successText="Registrando..."
-            disabled={!isFormValid || loading}
-            clicked={clicked}
-          />
-        </form>
+            {/* Indicador de validez de contraseña */}
+            {clave.length > 0 && (
+              <div className="text-xs text-[var(--Primary_5)] bg-[var(--Primary_0)] p-3 rounded-lg">
+                <p className={`${clave.length >= 8 ? 'text-green-600' : 'text-red-500'}`}>
+                  • Mínimo 8 caracteres {clave.length >= 8 ? '✓' : '✗'}
+                </p>
+                {repetirClave.length > 0 && (
+                  <p className={`${clave === repetirClave ? 'text-green-600' : 'text-red-500'}`}>
+                    • Las contraseñas coinciden {clave === repetirClave ? '✓' : '✗'}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Error message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+
+            {/* Botón principal */}
+            <div className="pt-2">
+              <ButtonState
+                initialText="Crear cuenta"
+                successText="Creando cuenta..."
+                disabled={!isFormValid || loading}
+                clicked={clicked}
+              />
+            </div>
+
+            {/* Enlaces adicionales */}
+            <div className="text-center pt-4 space-y-3">
+              <p className="text-sm text-[var(--Primary_5)]">
+                ¿Ya tienes una cuenta?
+              </p>
+              <a 
+                href="/login" 
+                className="block w-full text-center border-2 border-[var(--Primary_4)] text-[var(--Primary_4)] py-3 rounded-lg hover:bg-[var(--Primary_4)] hover:text-white transition-all duration-300 transform hover:scale-[1.02] font-medium"
+              >
+                Iniciar sesión
+              </a>
+            </div>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-6">
+          <p className="text-[var(--Primary_5)] text-sm">
+            Al registrarte aceptas nuestros términos y condiciones
+          </p>
+        </div>
       </div>
     </main>
   );

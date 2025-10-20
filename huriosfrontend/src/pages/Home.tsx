@@ -1,11 +1,12 @@
 // src/pages/Home.tsx
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import BrandsCarousel from "../components/BrandsCarousel";
-import ProductCard from "../components/ProductCard";
+import ShopCard, { type Product } from "../components/ShopCard";
 import Footer from "../components/Footer";
 import useReveal from "../hooks/useReveal";
+import { getProducts } from "../api/products";
 
 type Product = {
   id: number;
@@ -20,27 +21,21 @@ const Home: React.FC = () => {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    // Cargar productos al montar el componente
+    (async () => {
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/products`
-        );
-        const data = await res.json();
+        const data = await getProducts();
         setProducts(data);
-      } catch (err) {
-        console.error("Error al obtener productos:", err);
+      } catch (err: any) {
+        setError(err.message || "Error al cargar productos");
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchProducts();
+    })();
   }, []);
-
-  const nuevos = products.slice(0, 4);
-  const masVendidos = products.slice(4, 8);
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -55,11 +50,13 @@ const Home: React.FC = () => {
         >
           <h2 className="text-2xl font-bold mb-4">Nuevos repuestos</h2>
           {loading ? (
-            <p>Cargando...</p>
+            <div className="text-center py-8">Cargando productos...</div>
+          ) : error ? (
+            <div className="text-center text-red-600 py-8">{error}</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              {nuevos.map((p) => (
-                <ProductCard key={p.id} product={p} />
+              {products.slice(0, 4).map((product) => (
+                <ShopCard key={product.id} product={product} />
               ))}
             </div>
           )}
@@ -74,15 +71,16 @@ const Home: React.FC = () => {
           className="max-w-7xl mx-auto px-4 py-10 opacity-0 transform translate-y-6"
         >
           <h2 className="text-2xl font-bold mb-4">Los más vendidos</h2>
-          {!loading && (
+          {loading ? (
+            <div className="text-center py-8">Cargando productos...</div>
+          ) : error ? (
+            <div className="text-center text-red-600 py-8">{error}</div>
+          ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              {masVendidos.length > 0
-                ? masVendidos.map((p) => (
-                    <ProductCard key={p.id} product={p} />
-                  ))
-                : nuevos.map((p) => (
-                    <ProductCard key={p.id} product={p} />
-                  ))}
+              {/* Mostramos los últimos 4 productos (diferentes a los de nuevos repuestos) */}
+              {products.slice(-4).map((product) => (
+                <ShopCard key={product.id} product={product} />
+              ))}
             </div>
           )}
         </section>
