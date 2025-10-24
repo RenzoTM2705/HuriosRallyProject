@@ -9,7 +9,6 @@ import { ResetPassword } from "../pages/ResetPassword";
 import { NewPassword } from "../pages/NewPassword";
 import  Products  from "../pages/Products";
 import { About } from "../pages/About";
-import  ProductsDetails  from "../pages/ProductsDetails";
 import { Cart } from "../pages/Cart";
 import { CartProvider } from "../context/CartContext";
 import CartSidebar from "../components/CartSidebar";
