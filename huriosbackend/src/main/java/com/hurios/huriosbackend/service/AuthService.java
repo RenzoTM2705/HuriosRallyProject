@@ -146,9 +146,15 @@ public class AuthService {
         pr.setExpiresAt(LocalDateTime.now().plusHours(1));
         resetRepo.save(pr);
 
-        String link = frontendUrl() + "/reset-password?token=" + token + "&email=" + java.net.URLEncoder.encode(email, java.nio.charset.StandardCharsets.UTF_8);
+        String link = frontendUrl() + "/new-password?token=" + token + "&email=" + java.net.URLEncoder.encode(email, java.nio.charset.StandardCharsets.UTF_8);
         String html = "<p>Haz clic para restablecer tu contraseña: <a href=\"" + link + "\">Restablecer contraseña</a></p>";
-        emailService.sendHtml(email, "Reiniciar contraseña", html);
+        try {
+            emailService.sendHtml(email, "Reiniciar contraseña", html);
+        } catch (Exception e) {
+            // Log del error pero continuar el flujo para desarrollo
+            System.err.println("Error sending email: " + e.getMessage());
+            System.out.println("Reset link (for development): " + link);
+        }
         return "Si el email existe, se envió un correo";
     }
 

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { requestPasswordReset } from "../api/auth";
+import Navbar from "../components/Navbar";
 
 /*
  ResetPassword.tsx
@@ -9,22 +11,29 @@ export const ResetPassword: React.FC = () => {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
     
-    // Simular envío (aquí iría la lógica real)
-    setTimeout(() => {
+    try {
+      await requestPasswordReset(email);
       setIsSubmitted(true);
+    } catch (err: any) {
+      setError(err.message || "Error al enviar el enlace");
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[var(--Primary_0)] to-[var(--Primary_2)] flex flex-col justify-center items-center relative overflow-hidden">
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-gradient-to-br from-[var(--Primary_0)] to-[var(--Primary_2)] flex flex-col justify-center items-center relative overflow-hidden">
       {/* Elemento decorativo */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-[var(--Primary_3)] rounded-full opacity-15 blur-3xl animate-pulse"></div>
@@ -65,7 +74,14 @@ export const ResetPassword: React.FC = () => {
                   />
                 </div>
 
-                <button 
+                {/* Error message */}
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                    {error}
+                  </div>
+                )}
+
+                <button
                   type="submit"
                   disabled={!isEmailValid || isLoading}
                   className="w-full bg-gradient-to-r from-[var(--Primary_4)] to-[var(--Primary_5)] text-white py-3 px-4 rounded-lg font-medium hover:from-[var(--Primary_5)] hover:to-[var(--Primary_6)] transition-all duration-300 transform hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
@@ -119,5 +135,6 @@ export const ResetPassword: React.FC = () => {
         </div>
       </div>
     </main>
+    </>
   );
 };

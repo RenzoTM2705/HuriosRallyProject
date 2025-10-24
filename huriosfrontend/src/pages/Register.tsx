@@ -61,7 +61,8 @@ export function Register() {
   })();
   
   const isPasswordMatch = clave.length >= 8 && clave === repetirClave;
-  const isCelularValid = celular.replace(/\s/g, '').length === 9; // Exactamente 9 dígitos
+  // Validación para números de celular peruanos (inician con 9 y tienen 9 dígitos)
+  const isCelularValid = celular.length === 9 && /^9[0-9]{8}$/.test(celular);
   const isFormValid =
     nombre.trim() !== "" &&
     isEmailValid &&
@@ -197,25 +198,41 @@ export function Register() {
               <div className="sm:col-span-2">
                 <Input 
                   label="Número de celular" 
-                  type="tel"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={celular}
                   onChange={(e) => {
-                    // Solo permitir números y espacios, máximo 9 dígitos
-                    const value = e.target.value.replace(/[^0-9\s]/g, '');
-                    // Contar solo los números (sin espacios) y limitar a 9
-                    const numbersOnly = value.replace(/\s/g, '');
-                    if (numbersOnly.length <= 9) {
+                    // Solo permitir números, eliminar cualquier caracter que no sea número
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    // Limitar a máximo 9 dígitos
+                    if (value.length <= 9) {
                       setCelular(value);
                     }
-                  }} 
-                  placeholder="987 654 321" 
+                  }}
+                  onKeyPress={(e) => {
+                    // Prevenir entrada de caracteres no numéricos
+                    if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  placeholder="Ej: 987654321"
                 />
                 {/* Validación visual del celular */}
                 {celular.length > 0 && (
                   <div className="mt-1 text-xs">
                     <p className={`${isCelularValid ? 'text-green-600' : 'text-red-500'}`}>
-                      Exactamente 9 dígitos ({celular.replace(/\s/g, '').length}/9) {isCelularValid ? '✓' : '✗'}
+                      {isCelularValid ? '✓ Número válido' : 
+                        celular.length !== 9 ? `${celular.length}/9 dígitos - Número incompleto` :
+                        !celular.startsWith('9') ? 'Debe iniciar con 9 (celulares peruanos)' :
+                        'Formato inválido'
+                      }
                     </p>
+                    {!isCelularValid && (
+                      <p className="text-gray-500 text-xs mt-1">
+                        Ejemplo: 987654321
+                      </p>
+                    )}
                   </div>
                 )}
               </div>

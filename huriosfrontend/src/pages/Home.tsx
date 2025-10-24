@@ -8,15 +8,15 @@ import Footer from "../components/Footer";
 import useReveal from "../hooks/useReveal";
 import { getProducts } from "../api/products";
 
-/*
- Home.tsx
- - Composición de la página principal.
- - useReveal() activa las animaciones de aparición al hacer scroll.
- - Las secciones usan attribute data-reveal para ser observadas.
-*/
+type Product = {
+  id: number;
+  name: string;
+  description?: string;
+  price: number;
+  imageUrl?: string;
+};
 
 const Home: React.FC = () => {
-  // inicializar observer
   useReveal();
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -36,7 +36,6 @@ const Home: React.FC = () => {
       }
     })();
   }, []);
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -45,7 +44,10 @@ const Home: React.FC = () => {
         <Hero />
 
         {/* nuevos repuestos */}
-        <section data-reveal className="max-w-7xl mx-auto px-4 py-10 opacity-0 transform translate-y-6">
+        <section
+          data-reveal
+          className="max-w-7xl mx-auto px-4 py-10 opacity-0 transform translate-y-6"
+        >
           <h2 className="text-2xl font-bold mb-4">Nuevos repuestos</h2>
           {loading ? (
             <div className="text-center py-8">Cargando productos...</div>
@@ -64,7 +66,10 @@ const Home: React.FC = () => {
         <BrandsCarousel />
 
         {/* más vendidos */}
-        <section data-reveal className="max-w-7xl mx-auto px-4 py-10 opacity-0 transform translate-y-6">
+        <section
+          data-reveal
+          className="max-w-7xl mx-auto px-4 py-10 opacity-0 transform translate-y-6"
+        >
           <h2 className="text-2xl font-bold mb-4">Los más vendidos</h2>
           {loading ? (
             <div className="text-center py-8">Cargando productos...</div>

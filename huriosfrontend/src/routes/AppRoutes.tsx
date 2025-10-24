@@ -6,9 +6,12 @@ import { Login } from "../pages/Login";
 import { Register } from "../pages/Register";
 import { VerifyEmail } from "../pages/VerifyEmail";
 import { ResetPassword } from "../pages/ResetPassword";
+import { NewPassword } from "../pages/NewPassword";
 import  Products  from "../pages/Products";
 import { About } from "../pages/About";
 import { Cart } from "../pages/Cart";
+import { CartProvider } from "../context/CartContext";
+import CartSidebar from "../components/CartSidebar";
 /*
   AppRoutes instrumentado:
    - muestra en pantalla (y en consola) la location actual
@@ -30,33 +33,40 @@ function LocationDebugger() {
 }
 
 const AppRoutes: React.FC = () => (
-  <Router>
-    {/* componente que imprime la location en consola y la muestra en pantalla */}
-    <LocationDebugger />
+  <CartProvider>
+    <Router>
+      {/* componente que imprime la location en consola y la muestra en pantalla */}
+      <LocationDebugger />
 
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/products" element={<Products />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/cart" element={<Cart />} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/new-password" element={<NewPassword />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/details" element={<ProductsDetails />} />
+        <Route path="/cart" element={<Cart />} />
 
-      {/* catch-all: muestra la location en la UI si no hubo match */}
-      <Route
-        path="*"
-        element={
-          <div style={{ padding: 24 }}>
-            <h2>Ruta no encontrada</h2>
-            <p>La ruta solicitada no coincide con ninguna ruta definida.</p>
-            <p>Abre la consola (F12) y pega aquí lo que veas en el log <code>[Router] location changed</code>.</p>
-          </div>
-        }
-      />
-    </Routes>
-  </Router>
+        {/* catch-all: muestra la location en la UI si no hubo match */}
+        <Route
+          path="*"
+          element={
+            <div style={{ padding: 24 }}>
+              <h2>Ruta no encontrada</h2>
+              <p>La ruta solicitada no coincide con ninguna ruta definida.</p>
+              <p>Abre la consola (F12) y pega aquí lo que veas en el log <code>[Router] location changed</code>.</p>
+            </div>
+          }
+        />
+      </Routes>
+      
+      {/* CartSidebar global - se muestra en toda la aplicación */}
+      <CartSidebar />
+    </Router>
+  </CartProvider>
 );
 
 export default AppRoutes;

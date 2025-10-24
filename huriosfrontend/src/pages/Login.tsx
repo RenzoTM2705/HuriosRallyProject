@@ -4,7 +4,7 @@ import { ButtonState } from "../components/ButtonState";
 import { useState } from "react";
 import { loginUser } from "../api/auth";
 import { saveToken } from "../utils/token";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 export function Login() {
@@ -115,12 +115,12 @@ export function Login() {
 
             {/* Enlace de recuperación */}
             <div className="text-center">
-              <a 
-                href="/reset-password" 
+              <Link 
+                to="/reset-password" 
                 className="text-[var(--Primary_5)] hover:text-[var(--Primary_6)] text-sm font-medium transition-colors duration-200 hover:underline"
               >
                 ¿Olvidaste tu contraseña?
-              </a>
+              </Link>
             </div>
           </form>
         </div>
