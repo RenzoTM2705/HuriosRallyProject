@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
+import { createPortal } from "react-dom";
 
 export function Cart() {
     const { 
@@ -13,6 +14,180 @@ export function Cart() {
         updateQuantity,
         clearCart
     } = useCart();
+
+    // Payment modal state
+    const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
+    const [cardName, setCardName] = useState<string>("");
+    const [cardNumber, setCardNumber] = useState<string>("");
+    const [cardBrand, setCardBrand] = useState<string>('');
+    const cardInputRef = useRef<HTMLInputElement | null>(null);
+    const expiryInputRef = useRef<HTMLInputElement | null>(null);
+    const [expiry, setExpiry] = useState<string>("");
+    const [cvc, setCvc] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [paymentSuccess, setPaymentSuccess] = useState<boolean>(false);
+
+    // Lock scroll when modal open
+    useEffect(() => {
+        if (showPaymentModal) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => { document.body.style.overflow = ''; };
+    }, [showPaymentModal]);
+
+    // Close on Escape
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setShowPaymentModal(false);
+        };
+        if (showPaymentModal) document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [showPaymentModal]);
+
+    const sanitizeNumber = (s: string) => s.replace(/\s+/g, '');
+
+    const luhnCheck = (num: string) => {
+        const s = sanitizeNumber(num);
+        if (!/^[0-9]+$/.test(s)) return false;
+        let sum = 0;
+        let alt = false;
+        for (let i = s.length - 1; i >= 0; i--) {
+            let n = parseInt(s.charAt(i), 10);
+            if (alt) {
+                n *= 2;
+                if (n > 9) n -= 9;
+            }
+            sum += n;
+            alt = !alt;
+        }
+        return sum % 10 === 0;
+    };
+
+    const detectCardBrand = (digits: string) => {
+        if (/^4/.test(digits)) return 'visa';
+        if (/^(34|37)/.test(digits)) return 'amex';
+        if (/^(5[1-5])/.test(digits)) return 'mastercard';
+        if (/^(222[1-9]|22[3-9]\d|2[3-6]\d{2}|27[01]\d|2720)/.test(digits)) return 'mastercard';
+        return 'unknown';
+    };
+
+    const formatByBrand = (digits: string, brand: string) => {
+        if (brand === 'amex') {
+            // Amex 4-6-5
+            return digits.replace(/(\d{1,4})(\d{1,6})?(\d{1,5})?/, (_, g1, g2, g3) => {
+                return [g1, g2, g3].filter(Boolean).join(' ').trim();
+            }).trim();
+        }
+        // default 4-4-4-4
+        return digits.replace(/(.{4})/g, '$1 ').trim();
+    };
+
+    const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const el = e.target;
+        const rawValue = el.value;
+        const prevPos = el.selectionStart || 0;
+        const digits = rawValue.replace(/\D/g, '');
+        const brand = detectCardBrand(digits);
+        const formatted = formatByBrand(digits, brand);
+
+        // compute new caret position: count digits to left of prevPos in rawValue
+        const digitsBeforeCursor = rawValue.slice(0, prevPos).replace(/\D/g, '').length;
+        // find position in formatted corresponding to digitsBeforeCursor
+        let newPos = 0;
+        let counted = 0;
+        for (let i = 0; i < formatted.length; i++) {
+            if (/\d/.test(formatted[i])) counted++;
+            newPos++;
+            if (counted >= digitsBeforeCursor) break;
+        }
+
+        setCardBrand(brand === 'unknown' ? '' : brand);
+        setCardNumber(formatted);
+
+        requestAnimationFrame(() => {
+            const input = cardInputRef.current;
+            if (input) {
+                input.setSelectionRange(newPos, newPos);
+            }
+        });
+    };
+
+    const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const el = e.target;
+        const raw = el.value;
+        const prevPos = el.selectionStart || 0;
+        const digits = raw.replace(/\D/g, '');
+
+        let formatted = '';
+        if (digits.length <= 2) {
+            formatted = digits;
+        } else {
+            const month = digits.slice(0, 2);
+            const rest = digits.slice(2, 6); 
+            formatted = month + '/' + rest;
+        }
+
+        const digitsBeforeCursor = raw.slice(0, prevPos).replace(/\D/g, '').length;
+        let newPos = 0;
+        let counted = 0;
+        for (let i = 0; i < formatted.length; i++) {
+            if (/\d/.test(formatted[i])) counted++;
+            newPos++;
+            if (counted >= digitsBeforeCursor) break;
+        }
+
+        setExpiry(formatted);
+        requestAnimationFrame(() => {
+            const input = expiryInputRef.current;
+            if (input) input.setSelectionRange(newPos, newPos);
+        });
+    };
+
+    const validatePayment = () => {
+        const e: Record<string, string> = {};
+        const numSan = sanitizeNumber(cardNumber);
+        if (!numSan) e.cardNumber = 'Número de tarjeta requerido';
+        else if (!luhnCheck(numSan)) e.cardNumber = 'Número de tarjeta inválido';
+        if (!cardName.trim()) e.cardName = 'Nombre del titular requerido';
+        // expiry MM/YY or MM/YYYY
+        const expMatch = expiry.match(/^(0[1-9]|1[0-2])\/(?:(\d{2})|(\d{4}))$/);
+        if (!expMatch) {
+            e.expiry = 'Fecha inválida (MM/AA)';
+        } else {
+            const month = parseInt(expMatch[1], 10);
+            const yearRaw = expMatch[2] || expMatch[3];
+            let year = parseInt(yearRaw, 10);
+            if (yearRaw.length === 2) {
+                const prefix = Math.floor(new Date().getFullYear() / 100) * 100;
+                year += prefix;
+                // handle century rollover
+                if (year < new Date().getFullYear()) year += 100;
+            }
+            const expDate = new Date(year, month - 1 + 1, 0, 23, 59, 59); // end of month
+            if (expDate < new Date()) e.expiry = 'Tarjeta expirada';
+        }
+    if (!/^[0-9]{3,4}$/.test(cvc)) e.cvc = 'CVC inválido';
+    // email validation
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = 'Correo electrónico inválido';
+
+        setErrors(e);
+        return Object.keys(e).length === 0;
+    };
+
+    const onSubmitPayment = (ev?: React.FormEvent) => {
+        ev?.preventDefault();
+        if (!validatePayment()) return;
+        setPaymentSuccess(true);
+        clearCart();
+        setTimeout(() => {
+            setShowPaymentModal(false);
+            setPaymentSuccess(false);
+            setCardName(''); setCardNumber(''); setExpiry(''); setCvc(''); setEmail(''); setErrors({});
+        }, 1500);
+    };
 
     if (items.length === 0) {
         return (
@@ -156,10 +331,6 @@ export function Cart() {
                                                         <button className="text-sm text-[var(--Primary_5)] hover:text-[#1e4a6f] font-medium">
                                                             Guardar para más tarde
                                                         </button>
-
-                                                        <button className="text-sm text-[var(--Primary_5)] hover:text-[#1e4a6f] font-medium">
-                                                            Comparar con artículos similares
-                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -175,7 +346,7 @@ export function Cart() {
                                 {/* Subtotal */}
                                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                                     <div className="space-y-3">
-                                        <div className="flex justify-between text-lg">
+                                        <div className="flex justify-between text-[16px]">
                                             <span className="font-medium">Subtotal ({totalItems} productos):</span>
                                             <span className="font-bold">S/ {Number(totalPrice).toFixed(2)}</span>
                                         </div>
@@ -207,7 +378,7 @@ export function Cart() {
                                             </p>
                                         </div>
                                         
-                                        <button className="w-full bg-[var(--Primary_5)] text-white py-3 px-4 rounded-md font-medium hover:bg-[#1e4a6f] transition-colors">
+                                        <button onClick={() => setShowPaymentModal(true)} className="w-full bg-[var(--Primary_5)] text-white py-3 px-4 rounded-md font-medium hover:bg-[#1e4a6f] transition-colors">
                                             Proceder al pago
                                         </button>
                                         
@@ -247,6 +418,110 @@ export function Cart() {
                     </div>
                 </div>
             </main>
+            {showPaymentModal && typeof document !== 'undefined' && createPortal(
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" role="dialog" aria-modal="true" onClick={() => setShowPaymentModal(false)}>
+                    <div className="bg-white rounded-lg max-w-2xl w-full mx-4 overflow-hidden shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+                        <div className="p-6">
+                            <div className="flex items-start justify-between">
+                                <h3 className="text-xl font-semibold">Pago con tarjeta</h3>
+                                <button onClick={() => setShowPaymentModal(false)} className="text-gray-600 hover:text-gray-800 p-2 rounded-full">
+                                    <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                                </button>
+                            </div>
+
+                            {!paymentSuccess ? (
+                                <form className="mt-4 space-y-4" onSubmit={onSubmitPayment}>
+                                    <div className="relative">
+                                        <label className="block text-sm font-medium text-gray-700">Número de tarjeta</label>
+                                        <div className="mt-1 relative">
+                                            <input
+                                                ref={cardInputRef}
+                                                value={cardNumber}
+                                                onChange={handleCardNumberChange}
+                                                placeholder="0000 0000 0000 0000"
+                                                inputMode="numeric"
+                                                maxLength={30}
+                                                className="block w-full border border-gray-300 rounded-md p-2 pr-10"
+                                            />
+                                            {/* small brand indicator */}
+                                            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                                                {cardBrand === 'visa' && (
+                                                    <span className="text-xs font-semibold text-blue-600">Visa</span>
+                                                )}
+                                                {cardBrand === 'mastercard' && (
+                                                    <span className="text-xs font-semibold text-orange-600">Mastercard</span>
+                                                )}
+                                                {cardBrand === 'amex' && (
+                                                    <span className="text-xs font-semibold text-indigo-600">Amex</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        {errors.cardNumber && <p className="text-xs text-red-600 mt-1">{errors.cardNumber}</p>}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700">Titular de la tarjeta</label>
+                                        <input value={cardName} onChange={(e) => setCardName(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                                        {errors.cardName && <p className="text-xs text-red-600 mt-1">{errors.cardName}</p>}
+                                    </div>
+
+                                    <div className="grid grid-cols-3 gap-3">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700">Expiración (MM/AA)</label>
+                                            <input
+                                                ref={expiryInputRef}
+                                                    value={expiry}
+                                                    onChange={handleExpiryChange}
+                                                    placeholder="MM/AA"
+                                                    inputMode="numeric"
+                                                    maxLength={5}
+                                                    className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                                            />
+                                            {errors.expiry && <p className="text-xs text-red-600 mt-1">{errors.expiry}</p>}
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label className="block text-sm font-medium text-gray-700">CVC</label>
+                                            <input
+                                                value={cvc}
+                                                onChange={(e) => setCvc(e.target.value.replace(/\D/g, '').slice(0,4))}
+                                                placeholder="123"
+                                                inputMode="numeric"
+                                                maxLength={3}
+                                                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                                            />
+                                            {errors.cvc && <p className="text-xs text-red-600 mt-1">{errors.cvc}</p>}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700">Correo electrónico</label>
+                                        <input
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            placeholder="tu@correo.com"
+                                            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                                        />
+                                        {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email}</p>}
+                                    </div>
+
+                                    <div className="flex items-center justify-between mt-6">
+                                        <button type="button" onClick={() => setShowPaymentModal(false)} className="px-4 py-2 border rounded-md">Cancelar</button>
+                                        <button type="submit" className="px-6 py-2 bg-[var(--Primary_5)] text-white rounded-md">Pagar S/ {Number(totalPrice).toFixed(2)}</button>
+                                    </div>
+                                </form>
+                            ) : (
+                                <div className="mt-6 text-center p-6">
+                                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mx-auto mb-4">
+                                        <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="text-green-600"><path d="M20 6L9 17l-5-5"></path></svg>
+                                    </div>
+                                    <h4 className="text-lg font-semibold">Pago procesado</h4>
+                                    <p className="text-sm text-gray-600 mt-2">Gracias por tu compra. Se ha procesado el pago correctamente.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>, document.body
+            )}
             <Footer />
         </>
     );
