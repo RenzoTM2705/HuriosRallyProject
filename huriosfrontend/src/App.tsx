@@ -1,4 +1,3 @@
-// BUENO (usa rutas)
 import AppRoutes from "./routes/AppRoutes";
 function App() {
   return <AppRoutes />;

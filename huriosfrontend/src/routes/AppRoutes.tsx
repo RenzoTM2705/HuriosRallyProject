@@ -7,11 +7,12 @@ import { Register } from "../pages/Register";
 import { VerifyEmail } from "../pages/VerifyEmail";
 import { ResetPassword } from "../pages/ResetPassword";
 import { NewPassword } from "../pages/NewPassword";
-import  Products  from "../pages/Products";
+import Products from "../pages/Products";
 import { About } from "../pages/About";
 import { Cart } from "../pages/Cart";
 import { CartProvider } from "../context/CartContext";
 import CartSidebar from "../components/CartSidebar";
+import { EditProfile } from "../pages/EditProfile";
 /*
   AppRoutes instrumentado:
    - muestra en pantalla (y en consola) la location actual
@@ -47,8 +48,8 @@ const AppRoutes: React.FC = () => (
         <Route path="/new-password" element={<NewPassword />} />
         <Route path="/products" element={<Products />} />
         <Route path="/about" element={<About />} />
-        <Route path="/details" element={<ProductsDetails />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
 
         {/* catch-all: muestra la location en la UI si no hubo match */}
         <Route
@@ -62,7 +63,7 @@ const AppRoutes: React.FC = () => (
           }
         />
       </Routes>
-      
+
       {/* CartSidebar global - se muestra en toda la aplicación */}
       <CartSidebar />
     </Router>
