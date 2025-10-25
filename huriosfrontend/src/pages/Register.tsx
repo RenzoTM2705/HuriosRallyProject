@@ -89,10 +89,10 @@ export function Register() {
     try {
       // Preparar payload. Ajusta si tu backend espera más campos.
       const payload = {
-        nombre,    // opcional, backend puede ignorarlo si no lo espera
-        email: correo, // tu servicio usa 'email'
+        fullName: nombre,    // backend espera fullName
+        email: correo,       // tu servicio usa 'email'
         password: clave,
-        celular   // opcional
+        phone: celular       // backend espera phone
       };
 
       // petición al backend

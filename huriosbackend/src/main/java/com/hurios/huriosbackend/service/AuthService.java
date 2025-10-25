@@ -47,7 +47,7 @@ public class AuthService {
 
     // Registro: crea usuario, guarda hash de password y envía código de verificación
     @Transactional
-    public String register(String email, String password) throws Exception {
+    public String register(String email, String password, String fullName, String phone) throws Exception {
         Optional<User> existing = userRepo.findByEmail(email);
         if (existing.isPresent()) {
             return "Correo ya registrado";
@@ -55,6 +55,9 @@ public class AuthService {
         User user = new User();
         user.setEmail(email);
         user.setPasswordHash(passwordEncoder.encode(password)); // hashear contraseña
+        user.setFullName(fullName); // guardar nombre completo
+        user.setPhone(phone); // guardar teléfono
+        user.setRole("CLIENTE"); // todos los registros nuevos son CLIENTE
         user.setVerified(false);
         userRepo.save(user);
 
@@ -75,7 +78,8 @@ public class AuthService {
 
     // Login: valida credenciales; si isVerified==false devuelve "not_verified";
     // si todo OK, genera JWT y devuelve mapa con message y token.
-    public Map<String, Object> login(String email, String password) {
+    // Ahora también valida que el rol coincida
+    public Map<String, Object> login(String email, String password, String expectedRole) {
         Optional<User> op = userRepo.findByEmail(email);
         if (op.isEmpty()) return Map.of("ok", false, "message", "Usuario no encontrado");
         User user = op.get();
@@ -84,16 +88,22 @@ public class AuthService {
             return Map.of("ok", false, "message", "Contraseña incorrecta");
         }
 
+        // Validar que el rol del usuario coincida con el esperado
+        if (expectedRole != null && !expectedRole.equals(user.getRole())) {
+            String actualRole = user.getRole();
+            return Map.of("ok", false, "message", "Su correo es de perfil " + actualRole);
+        }
+
         if (!user.isVerified()) {
             return Map.of("ok", false, "message", "not_verified");
         }
 
-        // Generar JWT con subject = user id (puedes usar email si prefieres)
-        String subject = String.valueOf(user.getId());
+        // Generar JWT con subject = email del usuario
+        String subject = user.getEmail();
         String token = jwtUtil.generateToken(subject);
 
-        // devolver token y mensaje OK
-        return Map.of("ok", true, "message", "Login exitoso", "token", token);
+        // devolver token, mensaje OK y rol
+        return Map.of("ok", true, "message", "Login exitoso", "token", token, "role", user.getRole());
     }
 
     // Enviar nuevo código de verificación al email

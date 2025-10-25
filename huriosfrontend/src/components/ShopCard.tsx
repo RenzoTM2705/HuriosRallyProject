@@ -53,21 +53,44 @@ export const ShopCard: React.FC<{ product: Product }> = ({ product }) => {
       <p className="text-sm text-gray-600 flex-1">{product.description || "Sin descripción"}</p>
 
       {/* Precio */}
-      <div className="text-xl font-bold text-[var(--Primary_5)] mb-3">S/ {Number(product.price).toFixed(2)}</div>
+      <div className="text-xl font-bold text-[var(--Primary_5)] mb-2">S/ {Number(product.price).toFixed(2)}</div>
+
+      {/* Advertencia de stock bajo */}
+      {product.stock !== undefined && product.stock < 10 && product.stock > 0 && (
+        <div className="text-sm text-orange-600 font-medium mb-2 flex items-center gap-1">
+          <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          ¡Solo quedan {product.stock}!
+        </div>
+      )}
+      {product.stock !== undefined && product.stock === 0 && (
+        <div className="text-sm text-red-600 font-medium mb-2 flex items-center gap-1">
+          <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+          Agotado
+        </div>
+      )}
 
       {/* Botones de acción */}
       <div className="flex flex-col gap-2">
         <button
           onClick={handleAddToCart}
-          className="w-full px-4 py-2 bg-[var(--Primary_5)] text-white rounded-md font-medium hover:bg-[#1e4a6f] transition-colors flex items-center justify-center gap-2"
+          className="w-full px-4 py-2 bg-[var(--Primary_5)] text-white rounded-md font-medium hover:bg-[#1e4a6f] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[var(--Primary_5)]"
           aria-label={`Añadir ${product.name} al carrito`}
+          disabled={product.stock !== undefined && product.stock <= 0}
         >
           <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <circle cx={9} cy={21} r={1}></circle>
             <circle cx={20} cy={21} r={1}></circle>
             <path d="m1 1 4 4 14 1-1 7H6"></path>
           </svg>
-          Añadir al carrito
+          {product.stock !== undefined && product.stock <= 0 ? 'Agotado' : 'Añadir al carrito'}
         </button>
         <button
           onClick={(e: React.MouseEvent) => {
@@ -112,6 +135,29 @@ export const ShopCard: React.FC<{ product: Product }> = ({ product }) => {
                 <div className="md:w-3/5 w-full p-6 flex flex-col gap-4">
                   <h2 className="text-2xl font-semibold mb-1">{product.name}</h2>
                   <div className="text-2xl font-bold text-[var(--Primary_5)] mb-2">S/ {Number(product.price).toFixed(2)}</div>
+                  
+                  {/* Advertencia de stock */}
+                  {product.stock !== undefined && product.stock < 10 && product.stock > 0 && (
+                    <div className="text-base text-orange-600 font-medium flex items-center gap-2 bg-orange-50 p-3 rounded-md">
+                      <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                      </svg>
+                      ¡Solo quedan {product.stock} unidades!
+                    </div>
+                  )}
+                  {product.stock !== undefined && product.stock === 0 && (
+                    <div className="text-base text-red-600 font-medium flex items-center gap-2 bg-red-50 p-3 rounded-md">
+                      <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                      </svg>
+                      Producto agotado
+                    </div>
+                  )}
+                  
                   <p className="text-base text-gray-700 mb-2">{product.description || 'Sin descripción'}</p>
                   <div className="mt-auto">
                     <button
@@ -120,9 +166,10 @@ export const ShopCard: React.FC<{ product: Product }> = ({ product }) => {
                         handleAddToCart(e);
                         setShowDetails(false);
                       }}
-                      className="w-full px-6 py-3 bg-[var(--Primary_5)] text-white rounded-md font-medium hover:bg-[#1e4a6f] transition-colors text-lg"
+                      className="w-full px-6 py-3 bg-[var(--Primary_5)] text-white rounded-md font-medium hover:bg-[#1e4a6f] transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[var(--Primary_5)]"
+                      disabled={product.stock !== undefined && product.stock <= 0}
                     >
-                      Añadir al carrito
+                      {product.stock !== undefined && product.stock <= 0 ? 'Agotado' : 'Añadir al carrito'}
                     </button>
                   </div>
                 </div>

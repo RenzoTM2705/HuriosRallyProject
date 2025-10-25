@@ -37,6 +37,7 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable()) // deshabilitar CSRF para APIs (en producción revisa esto)
+            .cors(cors -> cors.configure(http)) // habilitar CORS
             .authorizeHttpRequests(auth -> auth
                 // rutas públicas (auth)
                 .requestMatchers("/auth/**").permitAll()

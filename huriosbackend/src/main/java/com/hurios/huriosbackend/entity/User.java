@@ -24,6 +24,18 @@ public class User {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
+    @Column(name = "full_name")
+    private String fullName;
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "role", nullable = false)
+    private String role = "CLIENTE"; // CLIENTE o ADMINISTRADOR
+
     @Column(name = "is_verified", nullable = false)
     private boolean isVerified = true; // por ahora true para evitar flow de verificación
 
@@ -51,4 +63,16 @@ public class User {
 
     public LocalDateTime getUpdatedAt(){return updatedAt;}
     public void setUpdatedAt(LocalDateTime updatedAt){this.updatedAt = updatedAt;}
+
+    public String getFullName(){return fullName;}
+    public void setFullName(String fullName){this.fullName = fullName;}
+
+    public String getPhone(){return phone;}
+    public void setPhone(String phone){this.phone = phone;}
+
+    public String getAddress(){return address;}
+    public void setAddress(String address){this.address = address;}
+
+    public String getRole(){return role;}
+    public void setRole(String role){this.role = role;}
 }

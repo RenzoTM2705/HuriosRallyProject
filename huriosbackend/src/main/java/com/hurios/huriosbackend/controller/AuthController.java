@@ -22,13 +22,15 @@ public class AuthController {
     }
 
     // POST /auth/register
-    // body: { "email": "...", "password": "..." }
+    // body: { "email": "...", "password": "...", "fullName": "...", "phone": "..." }
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, String> body) {
         String email = body.get("email");
         String password = body.get("password");
+        String fullName = body.get("fullName");
+        String phone = body.get("phone");
         try {
-            String msg = authService.register(email, password);
+            String msg = authService.register(email, password, fullName, phone);
             return ResponseEntity.ok(Map.of("message", msg));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -36,12 +38,13 @@ public class AuthController {
     }
 
     // POST /auth/login
-    // body: { "email": "...", "password": "..." }
+    // body: { "email": "...", "password": "...", "role": "CLIENTE" o "ADMINISTRADOR" }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         String email = body.get("email");
         String password = body.get("password");
-        Map<String, Object> res = authService.login(email, password);
+        String role = body.get("role"); // CLIENTE o ADMINISTRADOR
+        Map<String, Object> res = authService.login(email, password, role);
         // authService comunica ok:false con message si falla
         boolean ok = Boolean.TRUE.equals(res.get("ok"));
         if (!ok) {

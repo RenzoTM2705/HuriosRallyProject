@@ -2,7 +2,7 @@
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 type RegisterReq = { email: string; password: string };
-type LoginReq = { email: string; password: string };
+type LoginReq = { email: string; password: string; role: string };
 
 export async function registerUser(data: RegisterReq) {
   const res = await fetch(`${API_BASE}/auth/register`, {
@@ -24,10 +24,10 @@ export async function loginUser(data: LoginReq) {
     body: JSON.stringify(data),
   });
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || "Credenciales inválidas");
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.message || "Credenciales inválidas");
   }
-  return await res.json(); // { ok: true, message: "...", token: "..." }
+  return await res.json(); // { ok: true, message: "...", token: "...", role: "..." }
 }
 
 export async function sendVerificationCode(email: string) {

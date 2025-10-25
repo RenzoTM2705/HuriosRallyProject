@@ -1,7 +1,8 @@
 // src/components/Navbar.tsx
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { getToken, clearToken } from "../utils/token";
 
 
 const categories = [
@@ -17,7 +18,32 @@ const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   // catsOpen controla dropdown de categorías en desktop
   const [catsOpen, setCatsOpen] = useState(false);
+  // userDropdownOpen controla dropdown de usuario
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const { totalItems, toggleCart } = useCart();
+  const navigate = useNavigate();
+  const userDropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Verificar si hay sesión activa
+  const isAuthenticated = !!getToken();
+  
+  // Cerrar dropdown al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+  
+  const handleLogout = () => {
+    clearToken();
+    localStorage.removeItem('huriosRally_cart'); // Limpiar carrito también
+    setUserDropdownOpen(false);
+    window.location.href = '/'; // Recargar página
+  };
 
   return (
     <header className="w-full bg-[var(--Primary_5)] text-white sticky top-0 z-50">
@@ -101,12 +127,76 @@ const Navbar: React.FC = () => {
             )}
           </Link>
 
-          {/* botón login circular */}
-          <Link to="/login" aria-label="Iniciar sesión" className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-white text-[#27557a] hover:scale-105 transition flex-shrink-0">
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-              <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z" />
-            </svg>
-          </Link>
+          {/* dropdown de usuario */}
+          <div className="relative" ref={userDropdownRef}>
+            <button
+              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+              aria-label={isAuthenticated ? "Menú de usuario" : "Iniciar sesión"}
+              className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-white text-[#27557a] hover:scale-105 transition flex-shrink-0"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z" />
+              </svg>
+            </button>
+            
+            {/* Dropdown menu */}
+            {userDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                {!isAuthenticated ? (
+                  /* Usuario no autenticado */
+                  <Link
+                    to="/login"
+                    onClick={() => setUserDropdownOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3" />
+                    </svg>
+                    <span className="font-medium">Iniciar sesión</span>
+                  </Link>
+                ) : (
+                  /* Usuario autenticado */
+                  <>
+                    <Link
+                      to="/profile"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      <span>Ver perfil</span>
+                    </Link>
+                    
+                    <Link
+                      to="/reset-password"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                      </svg>
+                      <span>Cambiar contraseña</span>
+                    </Link>
+                    
+                    <hr className="my-2 border-gray-200" />
+                    
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors w-full text-left"
+                    >
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+                      </svg>
+                      <span>Cerrar sesión</span>
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* hamburger: visible en mobile/tablet */}
           <button
