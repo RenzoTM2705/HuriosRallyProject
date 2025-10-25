@@ -1,10 +1,17 @@
 // src/utils/token.tsx
 export function saveToken(token: string) {
-  localStorage.setItem("hurios_token", token);
+  if (typeof window !== 'undefined' && window.localStorage) {
+    localStorage.setItem("hurios_token", token);
+  }
 }
 export function getToken(): string | null {
-  return localStorage.getItem("hurios_token");
+  if (typeof window !== 'undefined' && window.localStorage) {
+    return localStorage.getItem("hurios_token");
+  }
+  return null;
 }
 export function clearToken() {
-  localStorage.removeItem("hurios_token");
+  if (typeof window !== 'undefined' && window.localStorage) {
+    localStorage.removeItem("hurios_token");
+  }
 }

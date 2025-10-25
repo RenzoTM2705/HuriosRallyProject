@@ -7,6 +7,7 @@ type Product = {
   description?: string;
   price: number;
   imageUrl?: string;
+  stock?: number;
 };
 
 type ProductCardProps = {
@@ -24,6 +25,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <h3 className="text-lg font-semibold">{product.name}</h3>
       <p className="text-sm text-gray-600">{product.description}</p>
       <p className="text-blue-600 font-bold">S/ {product.price.toFixed(2)}</p>
+      {product.stock !== undefined && product.stock < 10 && product.stock > 0 && (
+        <p className="text-sm text-orange-600 font-medium mt-1">¡Solo quedan {product.stock}!</p>
+      )}
+      {product.stock !== undefined && product.stock === 0 && (
+        <p className="text-sm text-red-600 font-medium mt-1">Agotado</p>
+      )}
     </div>
   );
 };
