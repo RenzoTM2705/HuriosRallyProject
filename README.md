@@ -55,6 +55,12 @@ Sistema web para **Hurios Rally E.I.R.L.**, tienda de repuestos automotrices.
 
 🔔 Beneficio: Perfecto para sistemas de eventos, validaciones o notificaciones en tiempo real.
 
+🗂️ **DAO (Data Access Object)**
+
+💡 Qué es: Patrón que separa la lógica de acceso a datos de la lógica de negocio, permitiendo interactuar con la base de datos mediante objetos dedicados.
+
+📦 Beneficio: Mejora la modularidad, facilita el mantenimiento y el cambio del motor de base de datos sin afectar el resto del sistema.
+
 ---
 
 ## 🏢 Acerca de la empresa  
