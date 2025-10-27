@@ -28,7 +28,32 @@ Sistema web para **Hurios Rally E.I.R.L.**, tienda de repuestos automotrices.
 ### Pruebas y garantía de calidad  
 ``📝 Aqui ira una descripcion de todas las herramientas que se usaron para realizar las pruebas de funcionalidad de la aplicación web.``
 ### Patrones de arquitectura y diseño  
-``📝 Aqui ira una descripcion de todos los patrones que se usaron para la arquitectura y diseño de la aplicación web.``
+ 🧩 **SOLID**
+
+ 💡 Qué es: Conjunto de principios que ayudan a mantener una alta cohesión y bajo acoplamiento en nuestro código.
+ 🚀 Beneficio: Facilita la mantenibilidad, escalabilidad y legibilidad del software, fomentando buenas prácticas de diseño.
+
+🧠 **MVC (Modelo - Vista - Controlador)**
+
+💡 Qué es: Patrón de arquitectura que separa la aplicación en tres capas:
+
+- Modelo: Maneja los datos y la lógica del negocio.
+- Vista: Se encarga de la interfaz con el usuario.
+- Controlador: Coordina la comunicación entre modelo y vista.
+
+🎯 Beneficio: Permite una estructura más organizada, reutilizable y fácil de mantener.
+
+🧍‍♂️ **SINGLETON**
+
+💡 Qué es: Patrón que asegura que solo exista una instancia de una clase y ofrece un único punto de acceso global.
+
+🔐 Beneficio: Ideal para gestionar recursos compartidos como conexiones a base de datos, logs o configuraciones globales.
+
+👀 **OBSERVER**
+
+💡 Qué es: Patrón donde un objeto (sujeto) notifica automáticamente a otros (observadores) cuando ocurre un cambio en su estado.
+
+🔔 Beneficio: Perfecto para sistemas de eventos, validaciones o notificaciones en tiempo real.
 
 ---
 
