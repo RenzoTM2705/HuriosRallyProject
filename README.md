@@ -31,6 +31,7 @@ Sistema web para **Hurios Rally E.I.R.L.**, tienda de repuestos automotrices.
  🧩 **SOLID**
 
  💡 Qué es: Conjunto de principios que ayudan a mantener una alta cohesión y bajo acoplamiento en nuestro código.
+ 
  🚀 Beneficio: Facilita la mantenibilidad, escalabilidad y legibilidad del software, fomentando buenas prácticas de diseño.
 
 🧠 **MVC (Modelo - Vista - Controlador)**
