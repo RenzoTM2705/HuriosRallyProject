@@ -8,15 +8,21 @@ import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/*
- * EmailService: wrapper sencillo para enviar correos HTML usando JavaMailSender.
- * - la propiedad spring.mail.username se usa como from.
+/**
+ * EmailService - Servicio completo para envío de emails
+ * Responsabilidades:
+ * - Enviar correos HTML y texto plano
+ * - Notificaciones de pedidos
+ * - Alertas de stock
+ * - Emails de recuperación de contraseña
+ * - Modo mock para desarrollo
  */
 @Service
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
     private final JavaMailSender mailSender;
+    private final ValidationService validationService;
 
     @Value("${spring.mail.username}")
     private String from;
@@ -24,8 +30,9 @@ public class EmailService {
     @Value("${app.email.mock:false}")
     private boolean mockEmail;
 
-    public EmailService(JavaMailSender mailSender) {
+    public EmailService(JavaMailSender mailSender, ValidationService validationService) {
         this.mailSender = mailSender;
+        this.validationService = validationService;
     }
 
     // Método para enviar HTML con fallback en caso de error
@@ -68,5 +75,118 @@ public class EmailService {
             // Re-throw para que el AuthService pueda manejar el error
             throw new Exception("Error al enviar email: " + e.getMessage());
         }
+    }
+
+    /**
+     * Enviar email de confirmación de compra
+     */
+    public void sendPurchaseConfirmation(String to, Long orderId, Double total) throws Exception {
+        validationService.validateEmail(to);
+        validationService.validateId(orderId);
+        validationService.validatePrice(total);
+
+        String subject = "Confirmación de Compra - Orden #" + orderId;
+        String html = String.format(
+            "<h2>Estimado cliente,</h2>" +
+            "<p>Tu compra ha sido confirmada.</p>" +
+            "<p><strong>Número de orden:</strong> #%d</p>" +
+            "<p><strong>Total:</strong> S/ %.2f</p>" +
+            "<p>Gracias por tu compra.</p>" +
+            "<p>Saludos,<br>Equipo Hurios Rally</p>",
+            orderId, total
+        );
+        
+        sendHtml(to, subject, html);
+    }
+
+    /**
+     * Enviar email de cambio de estado de orden
+     */
+    public void sendOrderStatusUpdate(String to, Long orderId, String newStatus) throws Exception {
+        validationService.validateEmail(to);
+        validationService.validateId(orderId);
+        
+        if (newStatus == null || newStatus.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nuevo estado no puede estar vacío");
+        }
+
+        String subject = "Actualización de Estado - Orden #" + orderId;
+        String html = String.format(
+            "<h2>Estimado cliente,</h2>" +
+            "<p>El estado de tu orden #%d ha cambiado.</p>" +
+            "<p><strong>Nuevo estado:</strong> %s</p>" +
+            "<p>Saludos,<br>Equipo Hurios Rally</p>",
+            orderId, newStatus
+        );
+        
+        sendHtml(to, subject, html);
+    }
+
+    /**
+     * Enviar alerta de stock bajo (para administradores)
+     */
+    public void sendLowStockAlert(String to, String productName, Integer currentStock) throws Exception {
+        validationService.validateEmail(to);
+        
+        if (productName == null || productName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nombre de producto inválido");
+        }
+        
+        if (currentStock == null || currentStock < 0) {
+            throw new IllegalArgumentException("Stock inválido");
+        }
+
+        String subject = "Alerta: Stock Bajo - " + productName;
+        String html = String.format(
+            "<h2>Alerta de Stock</h2>" +
+            "<p>El producto <strong>'%s'</strong> tiene stock bajo.</p>" +
+            "<p><strong>Stock actual:</strong> %d unidades</p>" +
+            "<p>Se recomienda realizar un nuevo pedido.</p>" +
+            "<p>Sistema Hurios Rally</p>",
+            productName, currentStock
+        );
+        
+        sendHtml(to, subject, html);
+    }
+
+    /**
+     * Enviar email de producto sin stock
+     */
+    public void sendOutOfStockAlert(String to, String productName) throws Exception {
+        validationService.validateEmail(to);
+        
+        if (productName == null || productName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nombre de producto inválido");
+        }
+
+        String subject = "Alerta: Producto Sin Stock - " + productName;
+        String html = String.format(
+            "<h2>Alerta de Stock</h2>" +
+            "<p>El producto <strong>'%s'</strong> se ha quedado sin stock.</p>" +
+            "<p>Se requiere reabastecimiento urgente.</p>" +
+            "<p>Sistema Hurios Rally</p>",
+            productName
+        );
+        
+        sendHtml(to, subject, html);
+    }
+
+    /**
+     * Validar formato de email sin enviar
+     */
+    public boolean isValidEmail(String email) {
+        try {
+            validationService.validateEmail(email);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Verificar si está en modo mock
+     */
+    public boolean isMockMode() {
+        return mockEmail;
     }
 }
