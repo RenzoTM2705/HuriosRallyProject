@@ -10,15 +10,20 @@ export interface Product {
   price: number;
   imageUrl?: string;
   stock?: number;
+  category?: string;
   createdAt?: string;
 }
 
 /**
  * Obtener todos los productos
  */
-export async function getAllProducts(): Promise<Product[]> {
+export async function getAllProducts(category?: string): Promise<Product[]> {
   try {
-    const res = await fetch(`${API_BASE}/products`, {
+    const url = category 
+      ? `${API_BASE}/products?category=${encodeURIComponent(category)}`
+      : `${API_BASE}/products`;
+
+    const res = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -20,6 +20,7 @@ import { Profile } from "../pages/Profile";
 import { Inventory } from "../pages/Inventory";
 import BoletasFacturas from "../pages/BoletasFacturas";
 import Proveedores from "../pages/Proveedores";
+import { Category } from "../pages/Category";
 /*
   AppRoutes instrumentado:
    - muestra en pantalla (y en consola) la location actual
@@ -54,6 +55,7 @@ const AppRoutes: React.FC = () => (
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/new-password" element={<NewPassword />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/category/:categoryId" element={<Category />} />
         <Route path="/about" element={<About />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />

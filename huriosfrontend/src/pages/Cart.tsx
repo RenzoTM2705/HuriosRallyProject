@@ -5,8 +5,10 @@ import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
 import { createPortal } from "react-dom";
 import { getToken } from "../utils/token";
+import { useRoleProtection } from "../hooks/useRoleProtection";
 
 export function Cart() {
+    useRoleProtection('cart'); // Bloquear acceso a admins
     const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
     const navigate = useNavigate();
     const { 

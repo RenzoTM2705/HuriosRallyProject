@@ -1,8 +1,8 @@
 // src/components/ShopCard.tsx
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { getRole } from "../utils/token";
 
 /**
  * Tipo/Interfaz pública del producto.
@@ -15,6 +15,7 @@ export type Product = {
   description?: string;
   imageUrl?: string;
   stock?: number;
+  category?: string;
 };
 
 /**
@@ -24,8 +25,8 @@ export type Product = {
  */
 export const ShopCard: React.FC<{ product: Product }> = ({ product }) => {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
-  const navigate = useNavigate();
   const { addToCart, isOpen, toggleCart } = useCart();
+  const isAdmin = getRole() === 'ADMINISTRADOR';
 
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [imgError, setImgError] = useState<boolean>(false);
@@ -95,14 +96,15 @@ export const ShopCard: React.FC<{ product: Product }> = ({ product }) => {
           onClick={handleAddToCart}
           className="w-full px-4 py-2 bg-[var(--Primary_5)] text-white rounded-md font-medium hover:bg-[#1e4a6f] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[var(--Primary_5)]"
           aria-label={`Añadir ${product.name} al carrito`}
-          disabled={product.stock !== undefined && product.stock <= 0}
+          disabled={isAdmin || (product.stock !== undefined && product.stock <= 0)}
+          title={isAdmin ? "Los administradores no pueden comprar" : undefined}
         >
           <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <circle cx={9} cy={21} r={1}></circle>
             <circle cx={20} cy={21} r={1}></circle>
             <path d="m1 1 4 4 14 1-1 7H6"></path>
           </svg>
-          {product.stock !== undefined && product.stock <= 0 ? 'Agotado' : 'Añadir al carrito'}
+          {isAdmin ? 'Solo para clientes' : product.stock !== undefined && product.stock <= 0 ? 'Agotado' : 'Añadir al carrito'}
         </button>
         <button
           onClick={(e: React.MouseEvent) => {
@@ -180,9 +182,10 @@ export const ShopCard: React.FC<{ product: Product }> = ({ product }) => {
                         setShowDetails(false);
                       }}
                       className="w-full px-6 py-3 bg-[var(--Primary_5)] text-white rounded-md font-medium hover:bg-[#1e4a6f] transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[var(--Primary_5)]"
-                      disabled={product.stock !== undefined && product.stock <= 0}
+                      disabled={isAdmin || (product.stock !== undefined && product.stock <= 0)}
+                      title={isAdmin ? "Los administradores no pueden comprar" : undefined}
                     >
-                      {product.stock !== undefined && product.stock <= 0 ? 'Agotado' : 'Añadir al carrito'}
+                      {isAdmin ? 'Solo para clientes' : product.stock !== undefined && product.stock <= 0 ? 'Agotado' : 'Añadir al carrito'}
                     </button>
                   </div>
                 </div>

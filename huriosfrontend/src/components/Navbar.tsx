@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { getToken, clearToken } from "../utils/token";
+import { getToken, clearToken, getRole } from "../utils/token";
 
 
 const categories = [
@@ -24,8 +24,9 @@ const Navbar: React.FC = () => {
   // const navigate = useNavigate();
   const userDropdownRef = useRef<HTMLDivElement>(null);
   
-  // Verificar si hay sesión activa
+  // Verificar si hay sesión activa y rol
   const isAuthenticated = !!getToken();
+  const isAdmin = getRole() === 'ADMINISTRADOR';
   
   // Cerrar dropdown al hacer click fuera
   useEffect(() => {
@@ -107,12 +108,13 @@ const Navbar: React.FC = () => {
             />
           </div>
 
-          {/* carrito */}
-          <Link 
-            to="/cart"
-            className="inline-flex items-center p-1.5 sm:p-2 rounded hover:bg-white/10 flex-shrink-0 relative"
-            aria-label={`Carrito de compras (${totalItems} items)`}
-          >
+          {/* carrito - oculto para admin */}
+          {!isAdmin && (
+            <Link 
+              to="/cart"
+              className="inline-flex items-center p-1.5 sm:p-2 rounded hover:bg-white/10 flex-shrink-0 relative"
+              aria-label={`Carrito de compras (${totalItems} items)`}
+            >
             <svg width={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
               <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
@@ -125,7 +127,8 @@ const Navbar: React.FC = () => {
                 {totalItems > 99 ? '99+' : totalItems}
               </span>
             )}
-          </Link>
+            </Link>
+          )}
 
           {/* dropdown de usuario */}
           <div className="relative" ref={userDropdownRef}>

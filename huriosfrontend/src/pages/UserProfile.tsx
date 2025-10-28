@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getUserProfile, updateUserProfile, type UserProfile as UserProfileType } from "../api/user";
 import { getToken } from "../utils/token";
+import { ProfileAvatar } from "../components/ProfileAvatar";
 
 export function UserProfile() {
   const navigate = useNavigate();
@@ -116,13 +117,15 @@ export function UserProfile() {
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                {/* Avatar predeterminado SVG */}
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--Primary_4)] to-[var(--Primary_5)] flex items-center justify-center shadow-lg">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                </div>
+                {/* Avatar con subida de imagen */}
+                <ProfileAvatar
+                  imageUrl={profile?.profileImage}
+                  onImageUpdate={async (newImageUrl) => {
+                    await updateUserProfile({ profileImage: newImageUrl });
+                    await loadProfile();
+                  }}
+                  size="large"
+                />
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">
                     {profile?.fullName || "Usuario"}

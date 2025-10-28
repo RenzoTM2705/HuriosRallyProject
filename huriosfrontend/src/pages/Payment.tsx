@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
 import { getToken } from "../utils/token";
 import { generateBoletaPDF, generateFacturaPDF } from "../utils/pdfGenerator";
+import { useRoleProtection } from "../hooks/useRoleProtection";
 
 type PaymentMethod = "card" | "yape";
 
@@ -23,6 +24,7 @@ interface YapeData {
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export function Payment() {
+    useRoleProtection('payment'); // Bloquear acceso a admins
     const navigate = useNavigate();
     const { items, totalPrice, clearCart } = useCart();
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
