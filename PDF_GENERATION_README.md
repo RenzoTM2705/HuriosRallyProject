@@ -41,7 +41,7 @@ Incluye:
 - Logo y datos de HURIOS RALLY E.I.R.L.
 - Dirección: Av. 22 de Agosto 1012, Comas 15312
 - Teléfono: 978 451 154
-- RUC: 999999999 (destacado en cuadro)
+- RUC: 20492248933 (destacado en cuadro)
 - Número de boleta
 - Datos del cliente (Nombre, DNI)
 - Fecha de emisión
@@ -61,7 +61,7 @@ Incluye:
 - Logo y datos de HURIOS RALLY E.I.R.L.
 - Dirección: Av. 22 de Agosto 1012, Comas 15312
 - Teléfono: 978 451 154
-- RUC: 999999999 (destacado en cuadro)
+- RUC: 20492248933 (destacado en cuadro)
 - Número de factura
 - Datos del cliente (Razón Social, RUC, Dirección Fiscal)
 - Fecha de emisión
