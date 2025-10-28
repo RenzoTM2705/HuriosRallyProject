@@ -1,6 +1,6 @@
 // src/pages/Products.tsx
 import { useEffect, useState } from "react";
-import { getProducts } from "../api/products";
+import { getAllProducts } from "../api/products";
 import ShopCard, { type Product } from "../components/ShopCard";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -21,7 +21,7 @@ export default function Products() {
         // cargar productos al montar
         (async () => {
             try {
-                const data = await getProducts();
+      const data = await getAllProducts();
                 setProducts(data);
             } catch (err: any) {
                 setError(err.message || "Error al cargar productos");

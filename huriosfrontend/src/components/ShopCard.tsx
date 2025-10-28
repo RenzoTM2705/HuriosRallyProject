@@ -23,10 +23,21 @@ export type Product = {
  *   para que puedas importarlo de la forma que prefieras.
  */
 export const ShopCard: React.FC<{ product: Product }> = ({ product }) => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
   const navigate = useNavigate();
   const { addToCart, isOpen, toggleCart } = useCart();
 
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [imgError, setImgError] = useState<boolean>(false);
+
+  const imageUrl = product.imageUrl 
+    ? (product.imageUrl.startsWith('http') ? product.imageUrl : `${API_BASE}${product.imageUrl}`)
+    : "/assets/imgs/placeholder.png";
+
+  const handleImageError = () => {
+    console.error(`Error cargando imagen para producto ${product.id}:`, imageUrl);
+    setImgError(true);
+  };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -40,16 +51,17 @@ export const ShopCard: React.FC<{ product: Product }> = ({ product }) => {
   return (
     <article className="bg-white rounded-lg shadow p-4 flex flex-col transition-transform hover:scale-105">
       {/* Imagen (placeholder si no hay) */}
-      <div className="aspect-[4/3] w-full mb-3 overflow-hidden rounded cursor-pointer" onClick={() => navigate(`/products/${product.id}`)}>
+      <div className="aspect-[4/3] w-full mb-3 overflow-hidden rounded">
         <img
-          src={product.imageUrl || "/assets/imgs/placeholder.png"}
+          src={imgError ? "/assets/imgs/placeholder.png" : imageUrl}
           alt={product.name}
-          className="object-cover h-full w-full transition-transform hover:scale-110"
+          className="object-cover h-full w-full"
+          onError={handleImageError}
         />
       </div>
 
       {/* Título y descripción */}
-      <h3 className="text-lg font-semibold mb-1 cursor-pointer hover:text-[var(--Primary_5)]" onClick={() => navigate(`/products/${product.id}`)}>{product.name}</h3>
+      <h3 className="text-lg font-semibold mb-1">{product.name}</h3>
       <p className="text-sm text-gray-600 flex-1">{product.description || "Sin descripción"}</p>
 
       {/* Precio */}
@@ -127,9 +139,10 @@ export const ShopCard: React.FC<{ product: Product }> = ({ product }) => {
               <div className="md:flex md:gap-6 items-start">
                 <div className="md:w-2/5 w-full flex items-center justify-center bg-gray-50 p-4">
                   <img
-                    src={product.imageUrl || "/assets/imgs/placeholder.png"}
+                    src={imgError ? "/assets/imgs/placeholder.png" : imageUrl}
                     alt={product.name}
                     className="w-full h-auto max-h-[36rem] object-contain"
+                    onError={handleImageError}
                   />
                 </div>
                 <div className="md:w-3/5 w-full p-6 flex flex-col gap-4">

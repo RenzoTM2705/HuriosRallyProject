@@ -1,6 +1,6 @@
 // src/components/Navbar.tsx
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { getToken, clearToken } from "../utils/token";
 
@@ -20,8 +20,8 @@ const Navbar: React.FC = () => {
   const [catsOpen, setCatsOpen] = useState(false);
   // userDropdownOpen controla dropdown de usuario
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const { totalItems, toggleCart } = useCart();
-  const navigate = useNavigate();
+  const { totalItems } = useCart();
+  // const navigate = useNavigate();
   const userDropdownRef = useRef<HTMLDivElement>(null);
   
   // Verificar si hay sesión activa

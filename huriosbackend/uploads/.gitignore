@@ -1,0 +1,8 @@
+# Ignorar todas las imágenes subidas por usuarios
+*
+# Pero mantener el archivo .gitignore
+!.gitignore
+# Y mantener la estructura de carpetas
+!products/
+products/*
+!products/.gitkeep

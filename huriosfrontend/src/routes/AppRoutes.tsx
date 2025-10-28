@@ -10,10 +10,13 @@ import { NewPassword } from "../pages/NewPassword";
 import Products from "../pages/Products";
 import { About } from "../pages/About";
 import { Cart } from "../pages/Cart";
+import { Checkout } from "../pages/Checkout";
+import { Payment } from "../pages/Payment";
 import { CartProvider } from "../context/CartContext";
 import CartSidebar from "../components/CartSidebar";
 import { UserProfile } from "../pages/UserProfile";
 import { AdminProfile } from "../pages/AdminProfile";
+import { Profile } from "../pages/Profile";
 import { Inventory } from "../pages/Inventory";
 import BoletasFacturas from "../pages/BoletasFacturas";
 import Proveedores from "../pages/Proveedores";
@@ -53,7 +56,10 @@ const AppRoutes: React.FC = () => (
         <Route path="/products" element={<Products />} />
         <Route path="/about" element={<About />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/profile" element={<UserProfile />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/user-profile" element={<UserProfile />} />
         <Route path="/admin-profile" element={<AdminProfile />} />
         <Route path="/inventario" element={<Inventory />} />
   <Route path="/boletas-facturas" element={<BoletasFacturas />} />

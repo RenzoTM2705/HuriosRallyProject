@@ -3,7 +3,7 @@ import { Input } from "../components/Input";
 import { ButtonState } from "../components/ButtonState";
 import { useState } from "react";
 import { loginUser } from "../api/auth";
-import { saveToken } from "../utils/token";
+import { saveToken, saveRole } from "../utils/token";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
@@ -24,6 +24,7 @@ export function Login() {
       const res = await loginUser({ email: correo, password: clave, role: selectedRole });
       // res: { token, role }
       saveToken(res.token);
+      saveRole(res.role);
       // redirigir a home
       navigate("/");
     } catch (err: unknown) {

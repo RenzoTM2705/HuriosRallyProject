@@ -43,6 +43,12 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
                 // rutas públicas (products - para que usuarios puedan ver productos sin login)
                 .requestMatchers("/products/**").permitAll()
+                // rutas públicas (export - para exportar reportes)
+                .requestMatchers("/export/**").permitAll()
+                // rutas públicas (uploads - para servir imágenes)
+                .requestMatchers("/uploads/**").permitAll()
+                // rutas públicas (api/images - para subir imágenes)
+                .requestMatchers("/api/images/**").permitAll()
                 // cualquier otra ruta requiere autenticación
                 .anyRequest().authenticated()
             )

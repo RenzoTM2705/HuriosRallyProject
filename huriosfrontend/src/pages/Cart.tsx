@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
 import { createPortal } from "react-dom";
+import { getToken } from "../utils/token";
 
 export function Cart() {
+    const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+    const navigate = useNavigate();
     const { 
         items, 
         totalItems, 
@@ -15,6 +18,8 @@ export function Cart() {
         clearCart
     } = useCart();
 
+    // Login modal state
+    const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
     // Payment modal state
     const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
     const [cardName, setCardName] = useState<string>("");
@@ -177,6 +182,15 @@ export function Cart() {
         return Object.keys(e).length === 0;
     };
 
+    const handleProceedToCheckout = () => {
+        const token = getToken();
+        if (!token) {
+            setShowLoginModal(true);
+        } else {
+            navigate("/checkout");
+        }
+    };
+
     const onSubmitPayment = (ev?: React.FormEvent) => {
         ev?.preventDefault();
         if (!validatePayment()) return;
@@ -258,13 +272,17 @@ export function Cart() {
                                 </div>
 
                                 <div className="divide-y divide-gray-200">
-                                    {items.map((item) => (
+                                    {items.map((item) => {
+                                        const imgUrl = item.imageUrl 
+                                          ? (item.imageUrl.startsWith('http') ? item.imageUrl : `${API_BASE}${item.imageUrl}`)
+                                          : "/assets/imgs/placeholder.png";
+                                        return (
                                         <div key={item.id} className="p-4 sm:p-6">
                                             <div className="flex flex-col sm:flex-row gap-4">
                                                 {/* Imagen */}
                                                 <div className="flex-shrink-0">
                                                     <img
-                                                        src={item.imageUrl || "/assets/imgs/placeholder.png"}
+                                                        src={imgUrl}
                                                         alt={item.name}
                                                         className="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg border border-gray-200"
                                                     />
@@ -339,7 +357,8 @@ export function Cart() {
                                                 </div>
                                             </div>
                                         </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
@@ -382,7 +401,7 @@ export function Cart() {
                                             </p>
                                         </div>
                                         
-                                        <button onClick={() => setShowPaymentModal(true)} className="w-full bg-[var(--Primary_5)] text-white py-3 px-4 rounded-md font-medium hover:bg-[#1e4a6f] transition-colors">
+                                        <button onClick={handleProceedToCheckout} className="w-full bg-[var(--Primary_5)] text-white py-3 px-4 rounded-md font-medium hover:bg-[#1e4a6f] transition-colors">
                                             Proceder al pago
                                         </button>
                                         
@@ -422,6 +441,41 @@ export function Cart() {
                     </div>
                 </div>
             </main>
+            {showLoginModal && typeof document !== 'undefined' && createPortal(
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" role="dialog" aria-modal="true" onClick={() => setShowLoginModal(false)}>
+                    <div className="bg-white rounded-lg max-w-md w-full mx-4 overflow-hidden shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+                        <div className="p-6">
+                            <div className="flex items-start justify-between">
+                                <h3 className="text-xl font-semibold">Inicia sesión para continuar</h3>
+                                <button onClick={() => setShowLoginModal(false)} className="text-gray-600 hover:text-gray-800 p-2 rounded-full">
+                                    <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                                </button>
+                            </div>
+
+                            <div className="mt-6 text-center">
+                                <svg width={64} height={64} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="mx-auto text-gray-400 mb-4">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx={12} cy={7} r={4}></circle>
+                                </svg>
+                                <p className="text-gray-600 mb-6">Debes iniciar sesión para proceder al pago</p>
+                                <Link 
+                                    to="/login" 
+                                    state={{ from: "/cart" }}
+                                    className="inline-block w-full bg-[var(--Primary_5)] text-white px-6 py-3 rounded-md font-medium hover:bg-[#1e4a6f] transition-colors"
+                                >
+                                    Ir al Login
+                                </Link>
+                                <button 
+                                    onClick={() => setShowLoginModal(false)}
+                                    className="mt-3 w-full text-gray-600 hover:text-gray-800 px-6 py-2"
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>, document.body
+            )}
             {showPaymentModal && typeof document !== 'undefined' && createPortal(
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" role="dialog" aria-modal="true" onClick={() => setShowPaymentModal(false)}>
                     <div className="bg-white rounded-lg max-w-2xl w-full mx-4 overflow-hidden shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
