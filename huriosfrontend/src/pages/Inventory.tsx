@@ -41,6 +41,7 @@ export function Inventory() {
     const [newPrice, setNewPrice] = useState("");
     const [newDesc, setNewDesc] = useState("");
     const [newStock, setNewStock] = useState("");
+    const [newCategory, setNewCategory] = useState("");
     // preview URL for uploaded image
     const [preview, setPreview] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -212,6 +213,7 @@ export function Inventory() {
                 price: Number(newPrice),
                 description: newDesc.trim() || undefined,
                 stock: Number(newStock) || 0,
+                category: newCategory || undefined,
                 imageUrl: imageUrl,
             };
 
@@ -225,6 +227,7 @@ export function Inventory() {
             setNewPrice("");
             setNewDesc("");
             setNewStock("");
+            setNewCategory("");
             setPreview(null);
             setSelectedFile(null);
             if (fileRef.current) fileRef.current.value = "";
@@ -251,6 +254,7 @@ export function Inventory() {
         setNewPrice("");
         setNewDesc("");
         setNewStock("");
+        setNewCategory("");
         setPreview(null);
         setSelectedFile(null);
         if (fileRef.current) fileRef.current.value = "";
@@ -455,6 +459,22 @@ export function Inventory() {
                             <div>
                                 <label className="block text-sm font-medium mb-1">Stock inicial</label>
                                 <input value={newStock} onChange={(e) => setNewStock(e.target.value)} type="number" className="w-full px-3 py-2 border rounded-md" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Categoría</label>
+                                <select value={newCategory} onChange={(e) => setNewCategory(e.target.value)} className="w-full px-3 py-2 border rounded-md">
+                                    <option value="">Seleccionar categoría</option>
+                                    <option value="Motor">Motor</option>
+                                    <option value="Suspensión">Suspensión</option>
+                                    <option value="Frenos">Frenos</option>
+                                    <option value="Eléctrico">Eléctrico</option>
+                                    <option value="Accesorios">Accesorios</option>
+                                    <option value="Transmisión">Transmisión</option>
+                                    <option value="Carrocería">Carrocería</option>
+                                    <option value="Neumáticos">Neumáticos</option>
+                                    <option value="Lubricantes">Lubricantes</option>
+                                    <option value="Filtros">Filtros</option>
+                                </select>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Foto del producto</label>

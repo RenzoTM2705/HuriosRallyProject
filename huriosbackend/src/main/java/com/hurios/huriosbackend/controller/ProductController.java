@@ -159,6 +159,12 @@ public class ProductController {
                 product.setImageUrl(imageUrl.trim().isEmpty() ? null : imageUrl.trim());
             }
             
+            // Actualizar category si se proporciona
+            String category = (String) body.get("category");
+            if (category != null) {
+                product.setCategory(category.trim().isEmpty() ? null : category.trim());
+            }
+            
             // Guardar cambios
             Product updatedProduct = productRepository.save(product);
             
@@ -239,6 +245,12 @@ public class ProductController {
             String imageUrl = (String) body.get("imageUrl");
             if (imageUrl != null && !imageUrl.trim().isEmpty()) {
                 product.setImageUrl(imageUrl.trim());
+            }
+
+            // Category (opcional)
+            String category = (String) body.get("category");
+            if (category != null && !category.trim().isEmpty()) {
+                product.setCategory(category.trim());
             }
 
             // Stock inicial (por defecto 0)

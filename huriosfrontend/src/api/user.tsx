@@ -10,6 +10,7 @@ export interface UserProfile {
   address?: string;
   role?: string;
   createdAt?: string;
+  profileImage?: string;
 }
 
 export async function getUserProfile(): Promise<UserProfile> {
@@ -61,6 +62,41 @@ export async function updateUserProfile(updates: Partial<UserProfile>): Promise<
       const body = await res.json().catch(() => ({}));
       throw new Error(body.error || "Error al actualizar perfil");
     }
+  } catch (error) {
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error("No se puede conectar con el servidor. Verifica que el backend esté corriendo.");
+    }
+    throw error;
+  }
+}
+
+/**
+ * Subir imagen de perfil
+ */
+export async function uploadProfileImage(file: File): Promise<{ imageUrl: string }> {
+  const token = getToken();
+  if (!token) {
+    throw new Error("No hay sesión activa");
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(`${API_BASE}/user/profile-image`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || "Error al subir imagen");
+    }
+
+    return await res.json();
   } catch (error) {
     if (error instanceof TypeError && error.message.includes('fetch')) {
       throw new Error("No se puede conectar con el servidor. Verifica que el backend esté corriendo.");
