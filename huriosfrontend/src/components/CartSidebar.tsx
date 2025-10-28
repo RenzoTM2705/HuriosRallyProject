@@ -4,14 +4,15 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 const CartSidebar: React.FC = () => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
   const { 
     isOpen, 
     items, 
     totalItems, 
     totalPrice, 
     toggleCart, 
-    removeFromCart, 
-    updateQuantity 
+    // removeFromCart,
+    // updateQuantity
   } = useCart();
 
   // Auto-cierre del sidebar después de 5 segundos
@@ -73,12 +74,16 @@ const CartSidebar: React.FC = () => {
               {/* Lista de productos */}
               <div className="flex-1 overflow-y-auto p-3">
                 <div className="space-y-3">
-                  {items.slice(-3).map((item) => (
+                  {items.slice(-3).map((item) => {
+                    const imgUrl = item.imageUrl 
+                      ? (item.imageUrl.startsWith('http') ? item.imageUrl : `${API_BASE}${item.imageUrl}`)
+                      : "/assets/imgs/placeholder.png";
+                    return (
                     <div key={item.id} className="flex items-start gap-3 p-2 border-b border-gray-100 last:border-b-0">
                       {/* Imagen del producto */}
                       <div className="flex-shrink-0 w-12 h-12 bg-white rounded overflow-hidden border">
                         <img
-                          src={item.imageUrl || "/assets/imgs/placeholder.png"}
+                          src={imgUrl}
                           alt={item.name}
                           className="w-full h-full object-cover"
                         />
@@ -99,7 +104,8 @@ const CartSidebar: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

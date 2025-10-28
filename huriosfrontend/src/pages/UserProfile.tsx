@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { getUserProfile, updateUserProfile, UserProfile as UserProfileType } from "../api/user";
+import { getUserProfile, updateUserProfile, type UserProfile as UserProfileType } from "../api/user";
 import { getToken } from "../utils/token";
 
 export function UserProfile() {

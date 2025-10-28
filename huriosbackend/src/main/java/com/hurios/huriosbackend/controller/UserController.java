@@ -47,6 +47,7 @@ public class UserController {
             profile.put("fullName", user.getFullName());
             profile.put("phone", user.getPhone());
             profile.put("address", user.getAddress());
+            profile.put("role", user.getRole());
             profile.put("createdAt", user.getCreatedAt());
 
             return ResponseEntity.ok(profile);

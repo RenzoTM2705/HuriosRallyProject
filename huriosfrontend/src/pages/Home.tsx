@@ -6,15 +6,7 @@ import BrandsCarousel from "../components/BrandsCarousel";
 import ShopCard, { type Product } from "../components/ShopCard";
 import Footer from "../components/Footer";
 import useReveal from "../hooks/useReveal";
-import { getProducts } from "../api/products";
-
-type Product = {
-  id: number;
-  name: string;
-  description?: string;
-  price: number;
-  imageUrl?: string;
-};
+import { getAllProducts } from "../api/products";
 
 const Home: React.FC = () => {
   useReveal();
@@ -27,7 +19,7 @@ const Home: React.FC = () => {
     // Cargar productos al montar el componente
     (async () => {
       try {
-        const data = await getProducts();
+      const data = await getAllProducts();
         setProducts(data);
       } catch (err: any) {
         setError(err.message || "Error al cargar productos");

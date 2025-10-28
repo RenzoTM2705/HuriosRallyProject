@@ -15,12 +15,25 @@ type ProductCardProps = {
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+  const [imgError, setImgError] = React.useState(false);
+  
+  const imageUrl = product.imageUrl 
+    ? (product.imageUrl.startsWith('http') ? product.imageUrl : `${API_BASE}${product.imageUrl}`)
+    : "/assets/imgs/placeholder.png";
+
+  const handleImageError = () => {
+    console.error(`Error cargando imagen para producto ${product.id}:`, imageUrl);
+    setImgError(true);
+  };
+
   return (
     <div className="bg-white shadow rounded-lg p-4">
       <img
-        src={product.imageUrl || "/assets/imgs/placeholder.png"}
+        src={imgError ? "/assets/imgs/placeholder.png" : imageUrl}
         alt={product.name}
         className="w-full h-40 object-cover mb-3"
+        onError={handleImageError}
       />
       <h3 className="text-lg font-semibold">{product.name}</h3>
       <p className="text-sm text-gray-600">{product.description}</p>
