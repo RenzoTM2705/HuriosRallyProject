@@ -95,7 +95,7 @@ mvn test -X
 - **Eclipse**: Click derecho → "Run As" → "JUnit Test"
 - **VS Code**: Instala extensión "Java Test Runner"
 
-  ###Pruebas TDD
+  ### Pruebas TDD
 
 https://github.com/user-attachments/assets/11f53906-f4e1-45f9-a893-aa96b595af07
 
