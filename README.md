@@ -220,4 +220,7 @@ https://github.com/user-attachments/assets/245120fb-74d3-425d-b8f4-2d54b0fa4c4a
 
 https://github.com/user-attachments/assets/7bdd4575-62f6-480d-b222-697f6fbad101
 
+## Pruebas de Prometheus y Grafana
+
+https://github.com/user-attachments/assets/27b9d585-0046-414b-807c-e2a1bd7c9e1f
 
