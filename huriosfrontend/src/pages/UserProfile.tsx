@@ -121,7 +121,8 @@ export function UserProfile() {
                 <ProfileAvatar
                   imageUrl={profile?.profileImage}
                   onImageUpdate={async (newImageUrl) => {
-                    await updateUserProfile({ profileImage: newImageUrl });
+                    // La imagen ya fue guardada en el backend por uploadProfileImage
+                    // Solo recargamos el perfil para reflejar el cambio
                     await loadProfile();
                   }}
                   size="large"

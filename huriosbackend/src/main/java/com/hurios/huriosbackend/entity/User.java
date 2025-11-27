@@ -33,6 +33,9 @@ public class User {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "profile_image")
+    private String profileImage;
+
     @Column(name = "role", nullable = false)
     private String role = "CLIENTE"; // CLIENTE o ADMINISTRADOR
 
@@ -75,4 +78,7 @@ public class User {
 
     public String getRole(){return role;}
     public void setRole(String role){this.role = role;}
+
+    public String getProfileImage(){return profileImage;}
+    public void setProfileImage(String profileImage){this.profileImage = profileImage;}
 }

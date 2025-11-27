@@ -38,6 +38,23 @@ interface FacturaData {
     deliveryMethod: string;
 }
 
+// Función auxiliar para convertir imagen a base64
+async function getLogoBase64(): Promise<string | null> {
+    try {
+        const response = await fetch('/assets/imgs/logo.webp');
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    } catch (e) {
+        console.error('Error cargando logo:', e);
+        return null;
+    }
+}
+
 // Función para convertir número a texto en español
 function numeroALetras(num: number): string {
     const unidades = ['', 'UNO', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'];
@@ -70,12 +87,22 @@ function numeroALetras(num: number): string {
     return resultado.trim() + ' CON ' + decimales.toString().padStart(2, '0') + '/100 SOLES';
 }
 
-export function generateBoletaPDF(data: BoletaData) {
+export async function generateBoletaPDF(data: BoletaData) {
     const doc = new jsPDF();
     
     // Borde exterior del documento
     doc.setLineWidth(1);
     doc.rect(10, 10, 190, 277);
+    
+    // Agregar logo
+    const logoBase64 = await getLogoBase64();
+    if (logoBase64) {
+        try {
+            doc.addImage(logoBase64, 'WEBP', 15, 15, 25, 25);
+        } catch (e) {
+            console.error('Error agregando logo:', e);
+        }
+    }
     
     // Encabezado principal
     doc.setFontSize(18);
@@ -219,17 +246,27 @@ export function generateBoletaPDF(data: BoletaData) {
     doc.save(`Boleta_${data.boletaNumber}.pdf`);
 }
 
-export function generateFacturaPDF(data: FacturaData) {
+export async function generateFacturaPDF(data: FacturaData) {
     const doc = new jsPDF();
     
     // Borde exterior del documento
     doc.setLineWidth(1);
     doc.rect(10, 10, 190, 277);
     
+    // Agregar logo
+    const logoBase64 = await getLogoBase64();
+    if (logoBase64) {
+        try {
+            doc.addImage(logoBase64, 'WEBP', 15, 15, 25, 25);
+        } catch (e) {
+            console.error('Error agregando logo:', e);
+        }
+    }
+    
     // Encabezado principal
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
-    doc.text("HURIOS RALLY E.I.R.L.", 15, 25);
+    doc.text("HURIOS RALLY E.I.R.L.", 50, 25);
     
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");

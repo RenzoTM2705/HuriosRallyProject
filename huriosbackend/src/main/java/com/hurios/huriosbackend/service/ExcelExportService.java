@@ -6,10 +6,17 @@ import com.hurios.huriosbackend.repository.ProductRepository;
 import com.hurios.huriosbackend.repository.UserRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.util.IOUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -39,12 +46,15 @@ public class ExcelExportService {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Clientes");
 
+            // Agregar logo
+            addLogo((XSSFWorkbook) workbook, sheet);
+
             // Estilo para el header
             CellStyle headerStyle = createHeaderStyle(workbook);
             CellStyle dataStyle = createDataStyle(workbook);
 
-            // Crear header
-            Row headerRow = sheet.createRow(0);
+            // Crear header (empezar en fila 4 para dejar espacio al logo)
+            Row headerRow = sheet.createRow(4);
             String[] columns = {"ID", "Nombre Completo", "Email", "Teléfono", "Dirección", "Fecha de Registro"};
             
             for (int i = 0; i < columns.length; i++) {
@@ -53,8 +63,8 @@ public class ExcelExportService {
                 cell.setCellStyle(headerStyle);
             }
 
-            // Llenar datos
-            int rowNum = 1;
+            // Llenar datos (empezar en fila 5)
+            int rowNum = 5;
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             
             for (User client : clients) {
@@ -89,13 +99,16 @@ public class ExcelExportService {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Productos");
 
+            // Agregar logo
+            addLogo((XSSFWorkbook) workbook, sheet);
+
             // Estilo para el header
             CellStyle headerStyle = createHeaderStyle(workbook);
             CellStyle dataStyle = createDataStyle(workbook);
             CellStyle currencyStyle = createCurrencyStyle(workbook);
 
-            // Crear header
-            Row headerRow = sheet.createRow(0);
+            // Crear header (empezar en fila 4 para dejar espacio al logo)
+            Row headerRow = sheet.createRow(4);
             String[] columns = {"ID", "Nombre", "Descripción", "Precio (S/)", "Stock", "Fecha de Creación"};
             
             for (int i = 0; i < columns.length; i++) {
@@ -104,8 +117,8 @@ public class ExcelExportService {
                 cell.setCellStyle(headerStyle);
             }
 
-            // Llenar datos
-            int rowNum = 1;
+            // Llenar datos (empezar en fila 5)
+            int rowNum = 5;
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             
             for (Product product : products) {
@@ -148,12 +161,15 @@ public class ExcelExportService {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Ventas");
 
+            // Agregar logo
+            addLogo((XSSFWorkbook) workbook, sheet);
+
             // Estilo para el header
             CellStyle headerStyle = createHeaderStyle(workbook);
             CellStyle dataStyle = createDataStyle(workbook);
 
-            // Crear header
-            Row headerRow = sheet.createRow(0);
+            // Crear header (empezar en fila 4 para dejar espacio al logo)
+            Row headerRow = sheet.createRow(4);
             String[] columns = {"ID", "Cliente", "Producto", "Cantidad", "Precio Total", "Fecha"};
             
             for (int i = 0; i < columns.length; i++) {
@@ -164,7 +180,7 @@ public class ExcelExportService {
 
             // TODO: Cuando implementes la entidad Sale, agregar los datos aquí
             // Por ahora, solo creamos el archivo vacío con headers
-            Row dataRow = sheet.createRow(1);
+            Row dataRow = sheet.createRow(5);
             createCell(dataRow, 0, "Sin ventas registradas", dataStyle);
 
             // Auto-ajustar columnas
@@ -220,5 +236,52 @@ public class ExcelExportService {
         Cell cell = row.createCell(column);
         cell.setCellValue(value);
         cell.setCellStyle(style);
+    }
+
+    /**
+     * Agregar logo de Hurios Rally al Excel
+     */
+    private void addLogo(XSSFWorkbook workbook, Sheet sheet) {
+        try {
+            // Intentar cargar el logo desde el proyecto frontend
+            File logoFile = new File("../huriosfrontend/public/assets/imgs/logo.webp");
+            if (!logoFile.exists()) {
+                // Si no existe, intentar desde resources
+                logoFile = new File("src/main/resources/static/logo.webp");
+            }
+            
+            if (logoFile.exists()) {
+                // Leer la imagen
+                InputStream is = new FileInputStream(logoFile);
+                byte[] bytes = IOUtils.toByteArray(is);
+                int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
+                is.close();
+                
+                // Crear el dibujo
+                XSSFDrawing drawing = (XSSFDrawing) sheet.createDrawingPatriarch();
+                XSSFClientAnchor anchor = new XSSFClientAnchor();
+                
+                // Posicionar el logo en las primeras filas (A1:B3)
+                anchor.setCol1(0);
+                anchor.setRow1(0);
+                anchor.setCol2(2);
+                anchor.setRow2(3);
+                
+                // Añadir la imagen
+                drawing.createPicture(anchor, pictureIdx);
+                
+                // Ajustar altura de las primeras filas para el logo
+                for (int i = 0; i < 4; i++) {
+                    Row row = sheet.getRow(i);
+                    if (row == null) {
+                        row = sheet.createRow(i);
+                    }
+                    row.setHeightInPoints(20);
+                }
+            }
+        } catch (Exception e) {
+            // Si falla, simplemente no agregar el logo
+            System.err.println("No se pudo agregar el logo al Excel: " + e.getMessage());
+        }
     }
 }

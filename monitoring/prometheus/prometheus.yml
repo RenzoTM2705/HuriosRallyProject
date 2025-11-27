@@ -1,0 +1,58 @@
+# Configuración de Prometheus para Hurios Rally
+global:
+  scrape_interval: 15s # Frecuencia de recolección de métricas
+  evaluation_interval: 15s # Frecuencia de evaluación de reglas
+  
+  # Etiquetas globales que se añaden a todas las métricas
+  external_labels:
+    monitor: 'hurios-rally-monitor'
+    environment: 'development'
+
+# Configuración de Alertmanager (opcional, para futuras alertas)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets: ['alertmanager:9093']
+
+# Reglas de alertas (se pueden agregar archivos de reglas aquí)
+rule_files:
+  # - "alerts/*.yml"
+
+# Configuración de scraping (recolección de métricas)
+scrape_configs:
+  # Monitoreo del propio Prometheus
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+  
+  # Monitoreo del backend Spring Boot (Hurios Rally)
+  - job_name: 'huriosbackend'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+        labels:
+          service: 'backend'
+          application: 'huriosbackend'
+          tier: 'backend'
+    
+    # Configuración opcional para autenticación si fuera necesaria
+    # basic_auth:
+    #   username: 'prometheus'
+    #   password: 'secret'
+  
+  # Métricas del sistema (opcional, requiere Node Exporter)
+  # - job_name: 'node'
+  #   static_configs:
+  #     - targets: ['node-exporter:9100']
+  #       labels:
+  #         service: 'node-exporter'
+
+  # Métricas de MySQL (opcional, requiere MySQL Exporter)
+  # - job_name: 'mysql'
+  #   static_configs:
+  #     - targets: ['mysql-exporter:9104']
+  #       labels:
+  #         service: 'mysql'

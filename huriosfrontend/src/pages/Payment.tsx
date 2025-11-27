@@ -306,8 +306,8 @@ export function Payment() {
             const igvCalculado = finalTotal - baseImponible;
             
             if (documentType === "dni") {
-                // Generar Boleta
-                generateBoletaPDF({
+                // Generar Boleta (asíncrono)
+                await generateBoletaPDF({
                     boletaNumber: `B001-${result.orderId || '00001'}`,
                     date: currentDate,
                     clientName: checkoutData.fullName,
@@ -320,8 +320,8 @@ export function Payment() {
                     deliveryMethod: deliveryMethodLabel
                 });
             } else {
-                // Generar Factura
-                generateFacturaPDF({
+                // Generar Factura (asíncrono)
+                await generateFacturaPDF({
                     facturaNumber: `F001-${result.orderId || '00001'}`,
                     date: currentDate,
                     clientName: checkoutData.companyName,

@@ -12,6 +12,10 @@ export function ProfileAvatar({ imageUrl, onImageUpdate, size = 'large' }: Profi
   const [error, setError] = useState<string | null>(null);
   const [showHover, setShowHover] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
+  // Construir URL completa de la imagen
+  const fullImageUrl = imageUrl ? `${API_BASE}${imageUrl}` : undefined;
 
   const sizeClasses = {
     small: 'w-12 h-12',
@@ -69,9 +73,9 @@ export function ProfileAvatar({ imageUrl, onImageUpdate, size = 'large' }: Profi
         onMouseLeave={() => setShowHover(false)}
         onClick={handleClick}
       >
-        {imageUrl ? (
+        {fullImageUrl ? (
           <img
-            src={imageUrl}
+            src={fullImageUrl}
             alt="Perfil"
             className="w-full h-full object-cover"
           />

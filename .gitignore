@@ -25,3 +25,9 @@ target/
 ### OS ###
 .DS_Store
 Thumbs.db
+
+### Monitoring ###
+# Datos persistentes de Prometheus y Grafana (gestionados por Docker volumes)
+monitoring/grafana/data/
+monitoring/prometheus/data/
+*.log

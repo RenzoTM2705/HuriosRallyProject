@@ -4,9 +4,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.File;
 
 /**
  * EmailService - Servicio completo para envío de emails
@@ -37,6 +40,11 @@ public class EmailService {
 
     // Método para enviar HTML con fallback en caso de error
     public void sendHtml(String to, String subject, String html) throws Exception {
+        sendHtml(to, subject, html, false);
+    }
+
+    // Método para enviar HTML con o sin logo incrustado
+    public void sendHtml(String to, String subject, String html, boolean includeLogo) throws Exception {
         if (mockEmail) {
             // Modo desarrollo - simular envío
             logger.info("\n" + "=".repeat(50));
@@ -57,6 +65,23 @@ public class EmailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(html, true); // true => HTML
+            
+            // Adjuntar logo si se solicita
+            if (includeLogo) {
+                try {
+                    // Intentar cargar el logo desde el proyecto frontend
+                    File logoFile = new File("../huriosfrontend/public/assets/imgs/logo.webp");
+                    if (logoFile.exists()) {
+                        FileSystemResource res = new FileSystemResource(logoFile);
+                        helper.addInline("logo", res);
+                        logger.info("✓ Logo attached to email");
+                    } else {
+                        logger.warn("⚠ Logo file not found at: {}", logoFile.getAbsolutePath());
+                    }
+                } catch (Exception e) {
+                    logger.warn("⚠ Could not attach logo: {}", e.getMessage());
+                }
+            }
             
             mailSender.send(message);
             logger.info("✓ Email sent successfully to: {}", to);
