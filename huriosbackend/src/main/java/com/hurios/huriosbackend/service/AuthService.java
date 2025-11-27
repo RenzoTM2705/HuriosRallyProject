@@ -70,8 +70,8 @@ public class AuthService {
         codeRepo.save(ev);
 
         // enviar correo con el código
-        String html = "<p>Tu código de verificación: <b>" + code + "</b></p><p>Expira en 15 minutos.</p>";
-        emailService.sendHtml(email, "Código de verificación", html);
+        String html = buildVerificationEmail(fullName, code);
+        emailService.sendHtml(email, "Código de verificación - Hurios Rally", html, true);
 
         return "Usuario creado. Revisa tu email para verificar.";
     }
@@ -119,7 +119,8 @@ public class AuthService {
         ev.setExpiresAt(LocalDateTime.now().plusMinutes(15));
         codeRepo.save(ev);
 
-        emailService.sendHtml(email, "Código de verificación", "<p>Tu código: <b>" + code + "</b></p>");
+        String html = buildVerificationEmail(user.getFullName(), code);
+        emailService.sendHtml(email, "Código de verificación - Hurios Rally", html, true);
         return "Código enviado";
     }
 
@@ -197,5 +198,47 @@ public class AuthService {
             return "http://localhost:5173";
         }
         return this.frontendUrl;
+    }
+
+    // Template HTML para email de verificación
+    private String buildVerificationEmail(String userName, String code) {
+        return "<!DOCTYPE html>" +
+            "<html>" +
+            "<head>" +
+            "<meta charset='UTF-8'>" +
+            "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+            "<style>" +
+            "body { margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #1a1a1a; }" +
+            ".container { max-width: 600px; margin: 0 auto; background-color: #1a1a1a; padding: 40px 20px; }" +
+            ".content { color: #ffffff; text-align: center; }" +
+            "h1 { color: #4a9eff; font-size: 32px; margin-bottom: 20px; }" +
+            "p { color: #cccccc; font-size: 16px; line-height: 1.6; margin: 15px 0; }" +
+            ".code-box { background-color: transparent; border: 3px dashed #ff4444; border-radius: 10px; padding: 30px; margin: 30px 0; display: inline-block; }" +
+            ".code { color: #ff4444; font-size: 48px; font-weight: bold; letter-spacing: 8px; font-family: monospace; }" +
+            ".warning { color: #cccccc; font-size: 14px; margin-top: 20px; }" +
+            ".logo { margin: 30px 0; }" +
+            ".logo img { width: 200px; height: auto; }" +
+            ".footer { color: #888888; font-size: 14px; margin-top: 40px; }" +
+            "</style>" +
+            "</head>" +
+            "<body>" +
+            "<div class='container'>" +
+            "<div class='content'>" +
+            "<h1>¡Bienvenido, " + userName + "!</h1>" +
+            "<p>Gracias por registrarte en nuestra aplicación. Para activar tu cuenta, utiliza el siguiente código OTP:</p>" +
+            "<div class='code-box'>" +
+            "<div class='code'>" + code + "</div>" +
+            "</div>" +
+            "<p class='warning'>Este código expira en 15 minutos. Por favor no lo compartas con nadie.</p>" +
+            "<div class='logo'>" +
+            "<img src='cid:logo' alt='Hurios Rally' />" +
+            "</div>" +
+            "<div class='footer'>" +
+            "<p>© 2025 Hurios Rally. Todos los derechos reservados.</p>" +
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            "</body>" +
+            "</html>";
     }
 }

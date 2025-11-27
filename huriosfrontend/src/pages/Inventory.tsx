@@ -446,11 +446,11 @@ export function Inventory() {
                         <form onSubmit={handleCreateProduct} className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium mb-1">Nombre</label>
-                                <input value={newName} onChange={(e) => setNewName(e.target.value)} className="w-full px-3 py-2 border rounded-md" />
+                                <input value={newName} onChange={(e) => setNewName(e.target.value.replace(/[0-9]/g, ""))} className="w-full px-3 py-2 border rounded-md" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Precio (S/)</label>
-                                <input value={newPrice} onChange={(e) => setNewPrice(e.target.value)} type="number" step="0.01" className="w-full px-3 py-2 border rounded-md" />
+                                <input value={newPrice} onChange={(e) => { const val = e.target.value; if (val === "" || parseFloat(val) >= 0) setNewPrice(val); }} type="number" step="0.01" min="0" className="w-full px-3 py-2 border rounded-md" />
                             </div>
                             <div className="sm:col-span-2">
                                 <label className="block text-sm font-medium mb-1">Descripción</label>
@@ -458,7 +458,7 @@ export function Inventory() {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Stock inicial</label>
-                                <input value={newStock} onChange={(e) => setNewStock(e.target.value)} type="number" className="w-full px-3 py-2 border rounded-md" />
+                                <input value={newStock} onChange={(e) => { const val = e.target.value; if (val === "" || parseInt(val) >= 0) setNewStock(val); }} type="number" min="0" className="w-full px-3 py-2 border rounded-md" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Categoría</label>
@@ -649,7 +649,7 @@ export function Inventory() {
                                             <label className="block text-sm font-medium mb-1">Nombre *</label>
                                             <input 
                                                 value={editName} 
-                                                onChange={(e) => setEditName(e.target.value)} 
+                                                onChange={(e) => setEditName(e.target.value.replace(/[0-9]/g, ""))} 
                                                 className="w-full px-3 py-2 border rounded-md" 
                                                 placeholder="Nombre del producto"
                                                 disabled={editLoading}
@@ -659,9 +659,10 @@ export function Inventory() {
                                             <label className="block text-sm font-medium mb-1">Precio (S/) *</label>
                                             <input 
                                                 value={editPrice} 
-                                                onChange={(e) => setEditPrice(e.target.value)} 
+                                                onChange={(e) => { const val = e.target.value; if (val === "" || parseFloat(val) >= 0) setEditPrice(val); }} 
                                                 type="number"
                                                 step="0.01"
+                                                min="0"
                                                 className="w-full px-3 py-2 border rounded-md" 
                                                 placeholder="0.00"
                                                 disabled={editLoading}
@@ -769,10 +770,10 @@ export function Inventory() {
                                 <input 
                                     type="number" 
                                     value={addQuantity} 
-                                    onChange={(e) => setAddQuantity(Number(e.target.value))} 
+                                    onChange={(e) => setAddQuantity(Math.max(0, Number(e.target.value)))} 
                                     className="w-full px-3 py-2 border rounded-md mb-4" 
                                     placeholder="Cantidad a agregar"
-                                    min="1"
+                                    min="0"
                                     disabled={stockLoading}
                                 />
                                 <div className="flex gap-2 justify-end">

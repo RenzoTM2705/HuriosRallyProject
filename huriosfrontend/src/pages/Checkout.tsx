@@ -68,7 +68,26 @@ export function Checkout() {
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        
+        // Validaciones de entrada según el tipo de campo
+        let newValue = value;
+        
+        // Campos que solo permiten letras (nombres)
+        if (name === "fullName" || name === "companyName" || name === "deliveryDistrict") {
+            // Permitir solo letras, espacios, tildes y caracteres especiales del español
+            newValue = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, "");
+        }
+        
+        // Campos que solo permiten números
+        if (name === "phone" || name === "dni" || name === "ruc") {
+            // Permitir solo números
+            newValue = value.replace(/[^0-9]/g, "");
+        }
+        
+        // Campos de dirección permiten letras, números y caracteres especiales
+        // (deliveryAddress, companyAddress, deliveryReference) - no requieren validación adicional
+        
+        setFormData((prev) => ({ ...prev, [name]: newValue }));
         // Limpiar error del campo
         if (errors[name]) {
             setErrors((prev) => {

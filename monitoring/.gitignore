@@ -1,0 +1,6 @@
+# Ignorar datos persistentes de Grafana y Prometheus
+grafana/data/
+prometheus/data/
+
+# Ignorar logs
+*.log

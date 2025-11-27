@@ -25,6 +25,14 @@ Sistema web para **Hurios Rally E.I.R.L.**, tienda de repuestos automotrices.
 ### 🗂️ Base de datos  
 - 🐬 **MySQL**: sistema de gestión de bases de datos relacional, confiable y escalable.
 
+### 📊 Monitoreo y Observabilidad
+- 📈 **Prometheus**: sistema de monitoreo y base de datos de series temporales para recolectar métricas del backend.
+- 📊 **Grafana**: plataforma de visualización de métricas con dashboards interactivos.
+- 🔍 **Spring Boot Actuator**: endpoints de métricas, health checks y monitoreo de la aplicación.
+- 📉 **Micrometer**: integración de métricas con Prometheus para monitoreo en tiempo real.
+
+[📖 Ver documentación completa de monitoreo](MONITORING_README.md)
+
 ### Pruebas y garantía de calidad  
 ``📝 Aqui ira una descripcion de todas las herramientas que se usaron para realizar las pruebas de funcionalidad de la aplicación web.``
 ### Patrones de arquitectura y diseño  
